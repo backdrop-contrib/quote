@@ -49,25 +49,7 @@ function quote_init() {
 }
 
 function quote_html_head() {
-    $style = "
-  .quote-msg { 
-    padding: 1em 1em 1em 1em;
-    margin-left: 10%;
-    margin-right: 10%;
-    background-color: #FAFAFA; 
-    border: #D1D7DC; 
-    border-style: solid;
-    border-width: 1px;
-  }
-  .quote-author {
-    padding-left: 1em;
-    padding-right: 1em;
-    margin-left: 10%;
-    margin-right: 10%;
-    font-weight: bold;
-  }
-  ";
-    return "<style type=\"text/css\">$style</style>\n";
+  return "<link type=\"text/css\" rel=\"stylesheet\" href=\"modules/quote/quote.css\" />";
 }
 
 function quote_filter($op, $text = "") {
