@@ -40,9 +40,9 @@ function quote_init() {
     $nid = arg(2);
     $cid = arg(3);
     if ($cid) {
-      $comment = db_fetch_object(db_query("SELECT c.*, u.uid, u.name, u.data FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid = %d AND c.status = 0", $cid));
+      $comment = db_fetch_object(db_query('SELECT c.*, u.uid, u.name AS registered_name, u.picture, u.data FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid = %d AND c.status = 0', $cid));
       $msg = $comment->comment;
-      $author = $comment->name;
+      $author = $comment->name = $comment->uid ? $comment->registered_name : $comment->name;
       $subject = $comment->subject;
       $_POST['edit']['pid'] = $cid;
     }
@@ -92,11 +92,12 @@ function quote_filter($op, $delta = 0, $format = -1, $text = '') {
 }
 
 function _quote_filter_process($text) {
-  // Quoting with or without specifying the source (code borrowed from bbcode.module)
+  // Quoting with or without specifying the source
   // Thanks: function based on code from punbb.org
-  if (strpos($text, '[quote') !== false) {
-    $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'.'\\1'." ".t("wrote:").'</div>', $text);
-    $text = str_replace('[quote]', '<div class="quote-msg"><div class="quote-author">'.t("Quote:").'</div>', $text);    $text = str_replace('[/quote]', '</div>', $text);
+  if (strpos($text, '[quote') !== FALSE) {
+    $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'. t('%name wrote:', array('%name' => '\\1')). '</div>', $text);
+    $text = str_replace('[quote]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
+    $text = str_replace('[/quote]', '</div>', $text);
   }
   return $text;
 }
