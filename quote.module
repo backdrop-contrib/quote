@@ -125,8 +125,12 @@ function _quote_filter_process($text) {
   // Quoting with or without specifying the source
   // Thanks: function based on code from punbb.org
   if (strpos($text, '[quote') !== FALSE) {
-    $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'. t('%name wrote:', array('%name' => '\\1')). '</div>', $text);
     $text = str_replace('[quote]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
+    
+    $text = str_replace('[quote=]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
+    
+    $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'. t('%name wrote:', array('%name' => '\\1')). '</div>', $text);
+
     $text = str_replace('[/quote]', '</div>', $text);
   }
   return $text;
