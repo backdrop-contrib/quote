@@ -26,13 +26,43 @@ function quote_init() {
     if ($cid) {
       $comment = db_fetch_object(db_query("SELECT c.*, u.uid, u.name, u.data FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid = %d AND c.status = 0", $cid));
       $msg = $comment->comment;
+      $author = $comment->name;
+      $_POST['edit']['pid'] = $cid;
     }
     elseif ($nid) {
       $node = node_load(array('nid' => $nid));
       $msg = $node->body;
+      $author = $node->name;
     }
-    $_POST['edit']['comment'] = "<cite>\n$msg\n</cite>";
-    $_POST['op'] = t('Preview comment');
+    $_POST['edit']['comment'] = "<div class=\"quote-author\">". t("%author wrote:", array ("%author" => $author)). "</div>\n<div class=\"quote-msg\">\n$msg\n</div>\n";
+    $_POST['edit']['nid'] = $nid;
+    $_POST['op'] = "Preview comment"; //can't use t() this early in the request? getting locale error
+  }
+}
+
+function quote_head() {
+  if ($_GET['quote']) {
+    $style = "
+  .quote-msg { 
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-left: 10%;
+    margin-right: 10%;
+    background-color: #FAFAFA; 
+    border: #D1D7DC; 
+    border-style: solid;
+    border-width: 1px;
+  }
+  .quote-author {
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-weight: bold;
+  }
+  ";
+    $item[] = "<style type=\"text/css\">$style</style>\n";
+    return $item ? $item : array();
   }
 }
 

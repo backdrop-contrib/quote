@@ -6,4 +6,4 @@ TODO
 - rework comment.module so this works for comment replies as well
 
 THEMEING
-- just stylize the <cite> tag to format quoted text.
+- you may redefine the quote-author and quote-msg css classes if you wish
