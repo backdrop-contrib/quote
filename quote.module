@@ -2,7 +2,7 @@
 
 function quote_help($section) {
   switch ($section) {
-    case 'admin/system/modules#description':
+    case 'admin/modules#description':
       return t('Allow users to quote other posts in their reply');
     case "filter#short-tip":
     case "filter#long-tip":
