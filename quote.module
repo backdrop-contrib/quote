@@ -1,0 +1,39 @@
+<?php
+
+function quote_help($section) {
+  switch ($section) {
+    case 'admin/system/modules#description':
+    case 'admin/system/modules/contact':
+      return t('Allow users to quote other posts in their reply');
+  }
+}
+
+function quote_link($type, $node = 0, $main = 0) {
+  if ($type == 'node' && user_access("post comments") && $node->comment == 2) {
+    $links[] = l(t("quote"), "comment/reply/$node->nid", array("title" => t("Start your new comment with a quote from this post.")), 'quote=1');
+  }
+  /* need to have comment_links() use regular link hook
+    elseif  ($type == 'comment' && user_access("post comments") && $node->comment == 2) {
+    $links[] = l(t("quote"), "comment/reply/$comment->nid/$comment->cid", array("title" => t("Start your reply with a quote from this comment.")), 'quote=1');
+  }*/
+  return $links ? $links : array();
+}
+
+function quote_init() {
+  if ($_GET['quote']) {
+    $nid = arg(2);
+    $cid = arg(3);
+    if ($cid) {
+      $comment = db_fetch_object(db_query("SELECT c.*, u.uid, u.name, u.data FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid = %d AND c.status = 0", $cid));
+      $msg = $comment->comment;
+    }
+    elseif ($nid) {
+      $node = node_load(array('nid' => $nid));
+      $msg = $node->body;
+    }
+    $_POST['edit']['comment'] = "<cite>\n$msg\n</cite>";
+    $_POST['op'] = t('Preview comment');
+  }
+}
+
+?>

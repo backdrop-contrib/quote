@@ -1,0 +1,9 @@
+INTRO
+This module adds a 'quote' below nodes. When clicked, the source node
+is copied to the comment body with <cite> tags around it.
+
+TODO
+- rework comment.module so this works for comment replies as well
+
+THEMEING
+- just stylize the <cite> tag to format quoted text.
