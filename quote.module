@@ -1,25 +1,35 @@
 <?php
+/* $Id$ */
 
+/**
+ * Implementation of hook_help().
+ */
 function quote_help($section) {
   switch ($section) {
     case 'admin/modules#description':
       return t('Allow users to quote other posts in their reply');
-    case "filter#short-tip":
-    case "filter#long-tip":
+    case 'filter#short-tip':
+    case 'filter#long-tip':
       return t('You may quote other posts using [quote] tags.');
   }
 }
 
+/**
+ * Implementation of hook_link().
+ */
 function quote_link($type, $node = 0, $main = 0) {
-  if ($type == 'node' && user_access("post comments") && $node->comment == 2) {
-    $links[] = l(t("quote"), "comment/reply/$node->nid", array("title" => t("Start your new comment with a quote from this post.")), 'quote=1');
+  if ($type == 'node' && user_access('post comments') && $node->comment == 2) {
+    $links[] = l(t('quote'), "comment/reply/$node->nid", array('title' => t('Start your new comment with a quote from this post.')), 'quote=1');
   }
-  elseif ($type == 'comment' && user_access("post comments") && node_comment_mode($node->nid) == 2) {
-    $links[] = l(t("quote"), "comment/reply/$node->nid/$node->cid", array("title" => t("Start your reply with a quote from this comment.")), 'quote=1');
+  elseif ($type == 'comment' && user_access('post comments') && node_comment_mode($node->nid) == 2) {
+    $links[] = l(t('quote'), "comment/reply/$node->nid/$node->cid", array('title' => t('Start your reply with a quote from this comment.')), 'quote=1');
   }
   return $links ? $links : array();
 }
 
+/**
+ * Implementation of hook_init().
+ */
 function quote_init() {
   drupal_set_html_head(quote_html_head());
   if ($_GET['quote']) {
@@ -39,27 +49,30 @@ function quote_init() {
       $subject = $node->title;
     }
     $_POST['edit']['comment'] = '[quote='.$author.']'.$msg.'[/quote]'."\n";
-    if (strpos($subject, "Re:") === false) {
-      $subject = "Re: " . $subject;
+    if (strpos($subject, 'Re:') === false) {
+      $subject = 'Re: ' . $subject;
     }
     $_POST['edit']['subject'] = $subject;
     $_POST['edit']['nid'] = $nid;
-    $_POST['op'] = "Preview comment"; //can't use t() this early in the request? getting locale error
+    $_POST['op'] = 'Preview comment'; //can't use t() this early in the request? getting locale error
   }
 }
 
 function quote_html_head() {
-  return "<link type=\"text/css\" rel=\"stylesheet\" href=\"modules/quote/quote.css\" />";
+  return '<link type="text/css" rel="stylesheet" href="'. module_get_path('quote') .'/quote.css" />';
 }
 
-function quote_filter($op, $text = "") {
+/**
+ * Implementation of hook_filter().
+ */
+function quote_filter($op, $text = '') {
   switch ($op) {
-    case "name":
-      return t("Quote filter");
-    case "process":
+    case 'name':
+      return t('Quote filter');
+    case 'process':
       return _quote_filter_process($text);
-    case "settings":
-      return form_group(t("Quote filter"), t("Users may quote other posts using [quote] tags."));
+    case 'settings':
+      return form_group(t('Quote filter'), t('Users may quote other posts using [quote] tags.'));
     default:
       return $text;
   }
@@ -68,7 +81,7 @@ function quote_filter($op, $text = "") {
 function _quote_filter_process($text) {
   // Quoting with or without specifying the source (code borrowed from bbcode.module)
   $preg = array('#\[quote(?::\w+)?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("Quote:").'</div><div class="quote-msg">\\1</div>',
-  '#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("%author wrote:", array("%author" => '\\1')).'</div><div class="quote-msg">\\2</div>');
+  '#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t('%author wrote:', array('%author' => '\\1')).'</div><div class="quote-msg">\\2</div>');
 
   $filtered = preg_replace(array_keys($preg), array_values($preg), $text);
 
