@@ -67,12 +67,15 @@ function quote_init() {
  */
 function quote_menu($may_cache) {
   if (!$may_cache) {
-    drupal_set_html_head(quote_html_head());
+    $quotecss = module_get_path('quote') .'/quote.css';
+    if (file_exists($quotecss)) {
+      drupal_set_html_head(quote_html_head($quotecss));
+    }
   }
 }
 
-function quote_html_head() {
-  return '<link type="text/css" rel="stylesheet" href="'. module_get_path('quote') .'/quote.css" />';
+function quote_html_head($quotecss) {
+  return '<link rel="stylesheet" type="text/css" href="'.$quotecss.'" />';
 }
 
 /**
