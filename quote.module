@@ -41,7 +41,7 @@ function quote_filter_tips($delta, $format, $long = false) {
     ');
   }
   else {
-    return t('You may quote other posts using <a href=\"%quote_help\">[quote] tags</a>.', array("%quote_help" => url("filter/tips/$format", NULL, 'filter-quote')));
+    return t('You may quote other posts using <a href="%quote_help">[quote] tags</a>.', array("%quote_help" => url("filter/tips/$format", NULL, 'filter-quote')));
   }
 }
 
