@@ -34,18 +34,16 @@ function quote_init() {
       $msg = $node->body;
       $author = $node->name;
     }
-    $_POST['edit']['comment'] = "<div class=\"quote-author\">". t("%author wrote:", array ("%author" => $author)). "</div>\n<div class=\"quote-msg\">\n$msg\n</div>\n";
+    $_POST['edit']['comment'] = "<div class=\"quote-author\">". strtr("%author wrote:", array ("%author" => $author)). "</div>\n<div class=\"quote-msg\">\n$msg\n</div><br /><br />\n\n";
     $_POST['edit']['nid'] = $nid;
     $_POST['op'] = "Preview comment"; //can't use t() this early in the request? getting locale error
   }
 }
 
 function quote_head() {
-  if ($_GET['quote']) {
     $style = "
   .quote-msg { 
-    padding-left: 1em;
-    padding-right: 1em;
+    padding: 1em 1em 1em 1em;
     margin-left: 10%;
     margin-right: 10%;
     background-color: #FAFAFA; 
@@ -63,7 +61,6 @@ function quote_head() {
   ";
     $item[] = "<style type=\"text/css\">$style</style>\n";
     return $item ? $item : array();
-  }
 }
 
 ?>
