@@ -7,7 +7,7 @@
 function quote_help($section) {
   switch ($section) {
     case 'admin/modules#description':
-      return t('Allow users to quote other posts in their reply');
+      return t('Allows users to quote other posts.');
   }
 }
 
@@ -82,10 +82,10 @@ function quote_filter($op, $delta = 0, $format = -1, $text = '') {
   switch ($op) {
     case 'list':
       return array(0 => t('Quote filter'));
+    case 'description':
+      return t('Converts [quote] tags into &lt;div&gt; tags. Must apply after HTML filters.');
     case 'process':
       return _quote_filter_process($text);
-    case 'description':
-      return t('Allows users to quote other posts using [quote] tags.');
     default:
       return $text;
   }
@@ -93,13 +93,12 @@ function quote_filter($op, $delta = 0, $format = -1, $text = '') {
 
 function _quote_filter_process($text) {
   // Quoting with or without specifying the source (code borrowed from bbcode.module)
-  // TODO: Allow for nested [quote] tags
-  $preg = array('#\[quote(?::\w+)?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("Quote:").'</div><div class="quote-msg">\\1</div>',
-  '#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t('%author wrote:', array('%author' => '\\1')).'</div><div class="quote-msg">\\2</div>');
-
-  $filtered = preg_replace(array_keys($preg), array_values($preg), $text);
-
-  return $filtered;
+  // Thanks: function based on code from punbb.org
+  if (strpos($text, '[quote') !== false) {
+    $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'.'\\1'." ".t("wrote:").'</div>', $text);
+    $text = str_replace('[quote]', '<div class="quote-msg"><div class="quote-author">'.t("Quote:").'</div>', $text);    $text = str_replace('[/quote]', '</div>', $text);
+  }
+  return $text;
 }
 
 ?>
