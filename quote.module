@@ -8,30 +8,34 @@ function quote_help($section) {
   switch ($section) {
     case 'admin/modules#description':
       return t('Allow users to quote other posts in their reply');
-    case 'filter#short-tip':
-    case 'filter#long-tip':
-      return t('You may quote other posts using [quote] tags.');
   }
+}
+
+/**
+ * Implementation of hook_filter_tips().
+ */
+function quote_filter_tips($delta, $format, $long = false) {
+  return t('You may quote other posts using [quote] tags.');
 }
 
 /**
  * Implementation of hook_link().
  */
 function quote_link($type, $node = 0, $main = 0) {
+  $links = array();
   if ($type == 'node' && user_access('post comments') && $node->comment == 2) {
     $links[] = l(t('quote'), "comment/reply/$node->nid", array('title' => t('Start your new comment with a quote from this post.')), 'quote=1');
   }
   elseif ($type == 'comment' && user_access('post comments') && node_comment_mode($node->nid) == 2) {
     $links[] = l(t('quote'), "comment/reply/$node->nid/$node->cid", array('title' => t('Start your reply with a quote from this comment.')), 'quote=1');
   }
-  return $links ? $links : array();
+  return $links;
 }
 
 /**
  * Implementation of hook_init().
  */
 function quote_init() {
-  drupal_set_html_head(quote_html_head());
   if ($_GET['quote']) {
     $nid = arg(2);
     $cid = arg(3);
@@ -58,6 +62,15 @@ function quote_init() {
   }
 }
 
+/**
+ * Implementation of hook_menu().
+ */
+function quote_menu($may_cache) {
+  if (!$may_cache) {
+    drupal_set_html_head(quote_html_head());
+  }
+}
+
 function quote_html_head() {
   return '<link type="text/css" rel="stylesheet" href="'. module_get_path('quote') .'/quote.css" />';
 }
@@ -65,14 +78,14 @@ function quote_html_head() {
 /**
  * Implementation of hook_filter().
  */
-function quote_filter($op, $text = '') {
+function quote_filter($op, $delta = 0, $format = -1, $text = '') {
   switch ($op) {
-    case 'name':
-      return t('Quote filter');
+    case 'list':
+      return array(0 => t('Quote filter'));
     case 'process':
       return _quote_filter_process($text);
-    case 'settings':
-      return form_group(t('Quote filter'), t('Users may quote other posts using [quote] tags.'));
+    case 'description':
+      return t('Allows users to quote other posts using [quote] tags.');
     default:
       return $text;
   }
@@ -80,16 +93,11 @@ function quote_filter($op, $text = '') {
 
 function _quote_filter_process($text) {
   // Quoting with or without specifying the source (code borrowed from bbcode.module)
+  // TODO: Allow for nested [quote] tags
   $preg = array('#\[quote(?::\w+)?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("Quote:").'</div><div class="quote-msg">\\1</div>',
   '#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t('%author wrote:', array('%author' => '\\1')).'</div><div class="quote-msg">\\2</div>');
 
   $filtered = preg_replace(array_keys($preg), array_values($preg), $text);
-
-  // Workaround for filter.module not running nl2br due to the <div>'s we add...
-  // TODO: Find a better solution for this
-  if (($filtered != $text) && (strip_tags($text, '<a><br><span><bdo><map><object><img><tt><i><b><u><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><ins><del><script>') == $text)) {
-    $filtered = nl2br($filtered);
-  }
 
   return $filtered;
 }
