@@ -12,14 +12,15 @@ function quote_link($type, $node = 0, $main = 0) {
   if ($type == 'node' && user_access("post comments") && $node->comment == 2) {
     $links[] = l(t("quote"), "comment/reply/$node->nid", array("title" => t("Start your new comment with a quote from this post.")), 'quote=1');
   }
-  /* need to have comment_links() use regular link hook
-    elseif  ($type == 'comment' && user_access("post comments") && $node->comment == 2) {
-    $links[] = l(t("quote"), "comment/reply/$comment->nid/$comment->cid", array("title" => t("Start your reply with a quote from this comment.")), 'quote=1');
-  }*/
+  /* need to have comment_links() use regular link hook... see http://drupal.org/node/view/4861
+    elseif  ($type == 'comment' && user_access("post comments") && node_comment_mode($node->nid) == 2) {
+    $links[] = l(t("quote"), "comment/reply/$node->nid/$node->cid", array("title" => t("Start your reply with a quote from this comment.")), 'quote=1');
+  } */
   return $links ? $links : array();
 }
 
 function quote_init() {
+  drupal_set_html_head(quote_html_head());
   if ($_GET['quote']) {
     $nid = arg(2);
     $cid = arg(3);
@@ -40,7 +41,7 @@ function quote_init() {
   }
 }
 
-function quote_head() {
+function quote_html_head() {
     $style = "
   .quote-msg { 
     padding: 1em 1em 1em 1em;
@@ -59,8 +60,7 @@ function quote_head() {
     font-weight: bold;
   }
   ";
-    $item[] = "<style type=\"text/css\">$style</style>\n";
-    return $item ? $item : array();
+    return "<style type=\"text/css\">$style</style>\n";
 }
 
 ?>
