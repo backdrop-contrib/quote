@@ -6,9 +6,7 @@ function quote_help($section) {
       return t('Allow users to quote other posts in their reply');
     case "filter#short-tip":
     case "filter#long-tip":
-      if (variable_get("quote_filter_enabled", 0)) {
-        return t('You may quote other posts using [quote] tags.');
-      }
+      return t('You may quote other posts using [quote] tags.');
   }
 }
 
@@ -31,19 +29,20 @@ function quote_init() {
       $comment = db_fetch_object(db_query("SELECT c.*, u.uid, u.name, u.data FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid = %d AND c.status = 0", $cid));
       $msg = $comment->comment;
       $author = $comment->name;
+      $subject = $comment->subject;
       $_POST['edit']['pid'] = $cid;
     }
     elseif ($nid) {
       $node = node_load(array('nid' => $nid));
       $msg = $node->body;
       $author = $node->name;
+      $subject = $node->title;
     }
-    if (variable_get("quote_filter_enabled", 0)) {
-      $_POST['edit']['comment'] = '[quote='.$author.']'.$msg.'[/quote]'."\n";
+    $_POST['edit']['comment'] = '[quote='.$author.']'.$msg.'[/quote]'."\n";
+    if (strpos($subject, "Re:") === false) {
+      $subject = "Re: " . $subject;
     }
-    else {
-      $_POST['edit']['comment'] = "<div class=\"quote-author\">". strtr("%author wrote:", array ("%author" => $author)). "</div>\n<div class=\"quote-msg\">\n$msg\n</div><br /><br />\n\n";
-    }
+    $_POST['edit']['subject'] = $subject;
     $_POST['edit']['nid'] = $nid;
     $_POST['op'] = "Preview comment"; //can't use t() this early in the request? getting locale error
   }
@@ -78,20 +77,13 @@ function quote_filter($op, $text = "") {
     case "process":
       return _quote_filter_process($text);
     case "settings":
-      return _quote_filter_config();
+      return form_group(t("Quote filter"), t("Users may quote other posts using [quote] tags."));
     default:
       return $text;
   }
 }
 
-function _quote_filter_config() {
-  $output = form_checkbox(t('Use [quote]-style filter for quoted messages'), 'quote_filter_enabled', 1, variable_get('quote_filter_enabled', 0), t('Enables users to quote others in their messages using [quote]. Leaving this filter disabled results in &lt;div&gt;\'s around quoted material.'));
-  return form_group(t("Quote filter"), $output);
-}
-
 function _quote_filter_process($text) {
-  if (variable_get("quote_filter_enabled", 0) == 0) return $text;
-
   // Quoting with or without specifying the source (code borrowed from bbcode.module)
   $preg = array('#\[quote(?::\w+)?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("Quote:").'</div><div class="quote-msg">\\1</div>',
   '#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("%author wrote:", array("%author" => '\\1')).'</div><div class="quote-msg">\\2</div>');
