@@ -1,10 +1,8 @@
 INTRO
-This module adds a 'quote' link below nodes. When clicked, the body of the source node
+This module adds a 'quote' link below nodes and comments. When clicked, the body of the source node
 is copied to the comment body with special formatting such that it is clear that
-the author is quoting from the source node.
-
-TODO
-- rework comment.module so this works for comment replies as well
+the author is quoting from the source node. The module also features a optional filter
+which encloses the quoted material in [quote] tags, hiding the raw markup from end users.
 
 THEMEING
 - you may redefine the quote-author and quote-msg css classes if you wish

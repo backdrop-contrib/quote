@@ -12,10 +12,9 @@ function quote_link($type, $node = 0, $main = 0) {
   if ($type == 'node' && user_access("post comments") && $node->comment == 2) {
     $links[] = l(t("quote"), "comment/reply/$node->nid", array("title" => t("Start your new comment with a quote from this post.")), 'quote=1');
   }
-  /* need to have comment_links() use regular link hook... see http://drupal.org/node/view/4861
-    elseif  ($type == 'comment' && user_access("post comments") && node_comment_mode($node->nid) == 2) {
+  elseif ($type == 'comment' && user_access("post comments") && node_comment_mode($node->nid) == 2) {
     $links[] = l(t("quote"), "comment/reply/$node->nid/$node->cid", array("title" => t("Start your reply with a quote from this comment.")), 'quote=1');
-  } */
+  }
   return $links ? $links : array();
 }
 
@@ -35,7 +34,12 @@ function quote_init() {
       $msg = $node->body;
       $author = $node->name;
     }
-    $_POST['edit']['comment'] = "<div class=\"quote-author\">". strtr("%author wrote:", array ("%author" => $author)). "</div>\n<div class=\"quote-msg\">\n$msg\n</div><br /><br />\n\n";
+    if (variable_get("quote_filter_enabled", 0)) {
+      $_POST['edit']['comment'] = '[quote='.$author.']'.$msg.'[/quote]'."\n";
+    }
+    else {
+      $_POST['edit']['comment'] = "<div class=\"quote-author\">". strtr("%author wrote:", array ("%author" => $author)). "</div>\n<div class=\"quote-msg\">\n$msg\n</div><br /><br />\n\n";
+    }
     $_POST['edit']['nid'] = $nid;
     $_POST['op'] = "Preview comment"; //can't use t() this early in the request? getting locale error
   }
@@ -61,6 +65,42 @@ function quote_html_head() {
   }
   ";
     return "<style type=\"text/css\">$style</style>\n";
+}
+
+function quote_filter($op, $text = "") {
+  switch ($op) {
+    case "name":
+      return t("Quote filter");
+    case "process":
+      return _quote_filter_process($text);
+    case "settings":
+      return _quote_filter_config();
+    default:
+      return $text;
+  }
+}
+
+function _quote_filter_config() {
+  $output = form_checkbox(t('Use [quote]-style filter for quoted messages'), 'quote_filter_enabled', 1, variable_get('quote_filter_enabled', 0), t('Enables users to quote others in their messages using [quote]. Leaving this filter disabled results in &lt;div&gt;\'s around quoted material.'));
+  return form_group(t("Quote filter"), $output);
+}
+
+function _quote_filter_process($text) {
+  if (variable_get("quote_filter_enabled", 0) == 0) return $text;
+
+  // Quoting with or without specifying the source (code borrowed from bbcode.module)
+  $preg = array('#\[quote(?::\w+)?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("Quote:").'</div>\n<div class="quote-msg">\\1</div>',
+  '#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("%author wrote:", array("%author" => '\\1')).'</div><div class="quote-msg">\\2</div>');
+
+  $filtered = preg_replace(array_keys($preg), array_values($preg), $text);
+
+  // Workaround for filter.module not running nl2br due to the <div>'s we add...
+  // TODO: Find a better solution for this
+  if (strip_tags($text, '<a><br><span><bdo><map><object><img><tt><i><b><u><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><ins><del><script>') == $text) {
+    $filtered = nl2br($filtered);
+  }
+
+  return $filtered;
 }
 
 ?>
