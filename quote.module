@@ -94,7 +94,7 @@ function quote_init() {
  */
 function quote_menu($may_cache) {
   if (!$may_cache) {
-    $quotecss = module_get_path('quote') .'/quote.css';
+    $quotecss = drupal_get_path('module', 'quote') .'/quote.css';
     if (file_exists($quotecss)) {
       drupal_set_html_head(quote_html_head($quotecss));
     }
@@ -126,9 +126,9 @@ function _quote_filter_process($text) {
   // Thanks: function based on code from punbb.org
   if (strpos($text, '[quote') !== FALSE) {
     $text = str_replace('[quote]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
-    
+
     $text = str_replace('[quote=]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
-    
+
     $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'. t('%name wrote:', array('%name' => '\\1')). '</div>', $text);
 
     $text = str_replace('[/quote]', '</div>', $text);
