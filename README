@@ -1,6 +1,7 @@
 INTRO
-This module adds a 'quote' below nodes. When clicked, the source node
-is copied to the comment body with <cite> tags around it.
+This module adds a 'quote' link below nodes. When clicked, the body of the source node
+is copied to the comment body with special formatting such that it is clear that
+the author is quoting from the source node.
 
 TODO
 - rework comment.module so this works for comment replies as well
