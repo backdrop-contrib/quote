@@ -3,8 +3,12 @@
 function quote_help($section) {
   switch ($section) {
     case 'admin/system/modules#description':
-    case 'admin/system/modules/contact':
       return t('Allow users to quote other posts in their reply');
+    case "filter#short-tip":
+    case "filter#long-tip":
+      if (variable_get("quote_filter_enabled", 0)) {
+        return t('You may quote other posts using [quote] tags.');
+      }
   }
 }
 
@@ -89,14 +93,14 @@ function _quote_filter_process($text) {
   if (variable_get("quote_filter_enabled", 0) == 0) return $text;
 
   // Quoting with or without specifying the source (code borrowed from bbcode.module)
-  $preg = array('#\[quote(?::\w+)?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("Quote:").'</div>\n<div class="quote-msg">\\1</div>',
+  $preg = array('#\[quote(?::\w+)?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("Quote:").'</div><div class="quote-msg">\\1</div>',
   '#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\](?:[\r\n])*(.*?)\[/quote(?::\w+)?\]#si' => '<div class="quote-author">'.t("%author wrote:", array("%author" => '\\1')).'</div><div class="quote-msg">\\2</div>');
 
   $filtered = preg_replace(array_keys($preg), array_values($preg), $text);
 
   // Workaround for filter.module not running nl2br due to the <div>'s we add...
   // TODO: Find a better solution for this
-  if (strip_tags($text, '<a><br><span><bdo><map><object><img><tt><i><b><u><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><ins><del><script>') == $text) {
+  if (($filtered != $text) && (strip_tags($text, '<a><br><span><bdo><map><object><img><tt><i><b><u><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><ins><del><script>') == $text)) {
     $filtered = nl2br($filtered);
   }
 
