@@ -12,12 +12,22 @@ function quote_help($section) {
 }
 
 /**
+ * Implementation of hook_menu().
+ */
+function quote_menu($may_cache) {
+  if (!$may_cache) {
+    // Reference quote.css, if it exists.
+    theme_add_style(drupal_get_path('module', 'quote') .'/quote.css');
+  }
+}
+
+/**
  * Implementation of hook_filter_tips().
  */
-function quote_filter_tips($delta, $format, $long = false) {
+function quote_filter_tips($delta, $format, $long = FALSE) {
   if ($long) {
     return t('
-    <h3 id=filter-quote>Quote filter</h3>
+    <h3 id="filter-quote">Quote filter</h3>
     <p>Quoted content can be placed between [quote] tags in order to be displayed as an indented quote. Every [quote] tag <em>must</em> have a corresponding [/quote] tag. For example: 
    <pre>[quote]This is a simple quote.[/quote]</pre> is displayed as:</p>
     <div class="quote-msg"><div class="quote-author">Quote:</div>This is a simple quote.</div>
@@ -48,58 +58,25 @@ function quote_filter_tips($delta, $format, $long = false) {
 /**
  * Implementation of hook_link().
  */
-function quote_link($type, $node = 0, $main = 0) {
+function quote_link($type, $post = 0, $main = 0) {
   $links = array();
-  if ($type == 'node' && user_access('post comments') && $node->comment == 2) {
-    $links[] = l(t('quote'), "comment/reply/$node->nid", array('title' => t('Start your new comment with a quote from this post.')), 'quote=1');
+
+  if (user_access('post comments')) {
+    // $post can be either a node or a comment.
+    if ($type == 'comment') {
+      // Display quote link for comments only if the parent node is accepting comments.
+      $node = node_load(arg(1));
+      if (variable_get("quote_{$node->type}_enabled", 0) && $node->comment == COMMENT_NODE_READ_WRITE) {
+        $links[] = l(t('quote'), "comment/reply/$post->nid/$post->cid/", array('title' => t('Quote this comment in your reply.')), 'quote=1');
+      }
+    }
+    elseif ($type == 'node' && variable_get("quote_{$post->type}_enabled", 0) && $post->comment == COMMENT_NODE_READ_WRITE) {
+      // Display quote link for comments only if the node is accepting comments.
+      $links[] = l(t('quote'), "comment/reply/$post->nid/", array('title' => t('Quote this post in your reply.')), 'quote=1');
+    }
   }
-  elseif ($type == 'comment' && user_access('post comments') && node_comment_mode($node->nid) == 2) {
-    $links[] = l(t('quote'), "comment/reply/$node->nid/$node->cid", array('title' => t('Start your reply with a quote from this comment.')), 'quote=1');
-  }
+
   return $links;
-}
-
-/**
- * Implementation of hook_menu().
- */
-function quote_menu($may_cache) {
-  if (!$may_cache) {
-    // reference quote.css, if it exists
-    $quotecss = drupal_get_path('module', 'quote') .'/quote.css';
-    if (file_exists($quotecss)) {
-      drupal_set_html_head(quote_html_head($quotecss));
-    }
-
-    // if quoting, generate comment body
-    if ($_GET['quote']) {
-      $nid = arg(2);
-      $cid = arg(3);
-      if ($cid) {
-        $comment = db_fetch_object(db_query('SELECT c.*, u.uid, u.name AS registered_name, u.picture, u.data FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid = %d AND c.status = 0', $cid));
-        $msg = $comment->comment;
-        $author = $comment->name = $comment->uid ? $comment->registered_name : $comment->name;
-        $subject = $comment->subject;
-        $_POST['edit']['pid'] = $cid;
-      }
-      elseif ($nid) {
-        $node = node_load(array('nid' => $nid));
-        $msg = $node->body;
-        $author = $node->name;
-        $subject = $node->title;
-      }
-      $_POST['edit']['comment'] = '[quote='.$author.']'.$msg.'[/quote]'."\n";
-      if (strpos($subject, t('Re:')) === false) {
-        $subject = t('Re:') .' '. $subject;
-      }
-      $_POST['edit']['subject'] = $subject;
-      $_POST['edit']['nid'] = $nid;
-      $_POST['op'] = t('Preview comment');
-    }
-  }
-}
-
-function quote_html_head($quotecss) {
-  return '<link rel="stylesheet" type="text/css" href="'.$quotecss.'" />';
 }
 
 /**
@@ -118,19 +95,65 @@ function quote_filter($op, $delta = 0, $format = -1, $text = '') {
   }
 }
 
+/**
+ * Implementation of hook_form_alter().
+ */
+function quote_form_alter($form_id, &$form) {
+  switch ($form_id) {
+    case 'comment_form':
+      if (isset($_GET['quote']) && $_GET['quote']) {
+        $nid = arg(2);
+        $cid = arg(3);
+
+        if ($cid) {
+          $comment = db_fetch_object(db_query('SELECT c.*, u.uid, u.name AS registered_name FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid = %d AND c.status = 0', $cid));
+
+          if ($comment->uid) {
+            $author = $comment->registered_name;
+          }
+          else {
+            $author = (!empty($comment->name)) ? $comment->name : variable_get('anonymous', 'Anonymous');
+          }
+          $quote = $comment->comment;
+          $subject = $comment->subject;
+        }
+        elseif ($nid) {
+          $node = node_load(array('nid' => $nid));
+          $quote = $node->body;
+          $author = !empty($node->name) ? $node->name : variable_get('anonymous', 'Anonymous');
+        }
+        $form['comment_filter']['comment']['#default_value'] = '[quote='. $author .']'. $quote ."[/quote]\n";
+        $form['subject']['#required'] = TRUE;
+      }
+      break;
+    case $form['type']['#value'] .'_node_settings':
+      $node->type = $form['type']['#value'];
+      $form['quote_settings'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Quote filter settings'),
+        '#weight' => 0,
+        '#collapsible' => TRUE,
+        '#collapsed' => FALSE,
+      );
+      $form['quote_settings']["quote_{$node->type}_enabled"] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Enable the quote filter for the %node-type type.', array('%node-type' => $node->type)),
+        '#default_value' => variable_get("quote_{$node->type}_enabled", 0),
+      );
+  }
+}
+
+/**
+ * Replace [quote] tags with markup for display.
+ */
 function _quote_filter_process($text) {
   // Quoting with or without specifying the source
   // Thanks: function based on code from punbb.org
   if (strpos($text, '[quote') !== FALSE) {
     $text = str_replace('[quote]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
-
     $text = str_replace('[quote=]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
-
     $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'. t('%name wrote:', array('%name' => '\\1')). '</div>', $text);
-
     $text = str_replace('[/quote]', '</div>', $text);
   }
   return $text;
 }
-
-?>
