@@ -185,15 +185,16 @@ function quote_settings_form_submit($form_id, $form_values) {
 
 /**
  * Replace [quote] tags with markup for display.
+ * @todo Fix this with one preg_replace.
  */
 function _quote_filter_process($text) {
-  // Quoting with or without specifying the source
   // Thanks: function based on code from punbb.org
-  if (strpos($text, '[quote') !== FALSE) {
-    $text = str_replace('[quote]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
-    $text = str_replace('[quote=]', '<div class="quote-msg"><div class="quote-author">'. t('Quote:') .'</div>', $text);
-    $text = preg_replace('#\[quote=(?:&quot;|"|\')?(.*?)["\']?(?:&quot;|"|\')?\]#si', '<div class="quote-msg"><div class="quote-author">'. t('%name wrote:', array('%name' => '\\1')). '</div>', $text);
-    $text = str_replace('[/quote]', '</div>', $text);
+  if (strstr($text, '[quote')) {
+    $pre = '<div class="quote-msg"><div class="quote-author">';
+    $post = '</div>';
+    $markup = $pre . t('Quote:') . $post;
+    $text = str_replace(array('[quote]', '[quote=]', '[/quote]'), array($markup, $markup, $post), $text);
+    $text = preg_replace('#\[quote=(?:"|\')?(.*?)["\']?(?:"|\')?\]#s', $pre . t('%name wrote:', array('%name' => '\\1')) . $post, $text);
   }
   return $text;
 }
