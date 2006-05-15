@@ -9,7 +9,7 @@ function quote_help($section) {
     case 'admin/modules#description':
       return t('Allows users to quote other posts.');
     case 'admin/quote':
-      return t('<p>The quote filter allows users to quote other posts in their comments. Besides the following settings, the quote filter will need to be enabled for each <a href="%input-format">input format</a> (as required). For more information, please visit the <a href="%project-page">project page</a>.</p>', array('%input-format' => 'admin/filters', '%project-page' => url('http://drupal.org/project/quote', NULL, NULL, TRUE)));
+      return t('<p>The quote filter allows users to quote other posts in their comments. Besides the following settings, the quote filter will need to be enabled for each <a href="%input-format">input format</a> (as required). For more information, please visit the <a href="%project-page">project page</a>.</p>', array('%input-format' => url('admin/filters'), '%project-page' => url('http://drupal.org/project/quote', NULL, NULL, TRUE)));
   }
 }
 
