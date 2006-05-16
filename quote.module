@@ -186,6 +186,7 @@ function quote_settings_form_submit($form_id, $form_values) {
   $types = array_filter($form_values['quote_node_types']);
   variable_set('quote_node_types', array_keys($types));
   variable_set('quote_node_link_display', $form_values['quote_node_link_display']);
+  variable_set('quote_subject_required', $form_values['quote_subject_required']);
 
   drupal_set_message('Configuration settings saved.');
   cache_clear_all();
