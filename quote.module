@@ -6,15 +6,13 @@
  */
 function quote_help($section) {
   switch ($section) {
-    case 'admin/modules#description':
-      return t('Allows users to quote other posts.');
-    case 'admin/quote':
+    case 'admin/settings/quote':
       return t('<p>The quote filter allows users to quote other posts in their 
 comments. Besides the following settings, the quote filter will need to be 
-enabled for each <a href="%input-format">input format</a> (as required). Please 
+enabled for each <a href="!input-format">input format</a> (as required). Please 
 make sure that the quote filter is arranged <em>after</em> any HTML filters and 
 <em>before</em> the line break filter. For more information, please visit the 
-<a href="%project-page">project page</a>.</p>', array('%input-format' => url('admin/filters'), '%project-page' => url('http://drupal.org/project/quote', NULL, NULL, TRUE)));
+<a href="!project-page">project page</a>.</p>', array('!input-format' => url('admin/settings/filters'), '!project-page' => url('http://drupal.org/project/quote', NULL, NULL, TRUE)));
   }
 }
 
@@ -26,15 +24,16 @@ function quote_menu($may_cache) {
 
   if ($may_cache) {
     $items[] = array(
-      'path' => 'admin/quote',
-      'title' => t('quote'),
-      'callback' => 'quote_settings_form',
-      'access' => user_access('administer filters'),
+      'path' => 'admin/settings/quote',
+      'title' => t('Quote'),
+      'callback' => 'drupal_get_form', 
+      'callback arguments' => 'quote_settings_form',
+      'access' => user_access('administer filters')
     );
   }
   else {
     // Reference quote.css, if it exists.
-    theme_add_style(drupal_get_path('module', 'quote') .'/quote.css');
+    drupal_add_css(drupal_get_path('module', 'quote') .'/quote.css');
   }
 
   return $items;
@@ -86,12 +85,22 @@ function quote_link($type, $post = 0, $main = 0) {
       // Display quote link for comments only if the parent node is accepting comments and has the quote filter enabled.
       $node = node_load(arg(1));
       if (in_array($node->type, variable_get('quote_node_types', array('blog', 'story'))) && $node->comment == COMMENT_NODE_READ_WRITE) {
-        $links[] = l(t('quote'), "comment/reply/$post->nid/$post->cid/", array('title' => t('Quote this comment in your reply.')), 'quote=1');
+        $links['quote'] = array(
+          'title' => t('Quote'),
+          'href' => "comment/reply/$post->nid/$post->cid",
+          'attributes' => array('title' => t('Jump to the first comment of this posting.')),
+          'query' => 'quote=1'
+        );
       }
     }
     elseif ($type == 'node' && in_array($post->type, variable_get('quote_node_types', array('blog', 'story'))) && $post->comment == COMMENT_NODE_READ_WRITE && variable_get('quote_node_link_display', 1)) {
       // Display quote link for nodes only if the node is accepting comments, has the quote filter enabled and has quote_link_display set.
-      $links[] = l(t('quote'), "comment/reply/$post->nid/", array('title' => t('Quote this post in your reply.')), 'quote=1');
+      $links['quote'] = array(
+        'title' => t('Quote'),
+        'href' => "comment/reply/$post->nid",
+        'attributes' => array('title' => t('Quote this post in your reply.')),
+        'query' => 'quote=1'
+      );
     }
   }
 
@@ -165,7 +174,7 @@ function quote_settings_form() {
     '#type' => 'checkboxes',
     '#title' => t('Node associations'),
     '#description' => t('Select the node types to associate with the quote filter.'),
-    '#options' => node_get_types(),
+    '#options' => _quote_get_node_types(),
     '#default_value' => variable_get('quote_node_types', array('blog', 'story'))
   );
   $form['quote']['quote_node_link_display'] = array(
@@ -182,7 +191,7 @@ function quote_settings_form() {
   );
   $form['submit'] = array('#type' => 'submit', '#value' => 'Save configuration');
 
-  return drupal_get_form('quote_settings_form', $form);
+  return $form;
 }
 
 /**
@@ -219,4 +228,20 @@ function _quote_filter_process($text) {
     $text = preg_replace('#\[quote=(?:"|\')?(.*?)["\']?(?:"|\')?\]#s', $pre . t('%name wrote:', array('%name' => '\\1')) . $post, $text);
   }
   return $text;
+}
+
+/**
+ * Helper function that returns node types.
+ */
+function _quote_get_node_types($keys = FALSE) {
+  $node_types = node_get_types();
+  if (!$keys) {
+    foreach ($node_types as $type => $object) {
+      $node_types[$type] = $object->name;
+    }
+
+    return $node_types;
+  }
+
+  return array_keys($node_types);
 }
