@@ -45,7 +45,6 @@ function quote_menu($may_cache) {
 function quote_filter_tips($delta, $format, $long = FALSE) {
   if ($long) {
     return t('
-    <h3 id="filter-quote">Quote filter</h3>
     <p>Quoted content can be placed between [quote] tags in order to be displayed as an indented quote. Every [quote] tag <em>must</em> have a corresponding [/quote] tag. For example: 
    <pre>[quote]This is a simple quote.[/quote]</pre> is displayed as:</p>
     <div class="quote-msg"><div class="quote-author">Quote:</div>This is a simple quote.</div>
@@ -69,7 +68,7 @@ function quote_filter_tips($delta, $format, $long = FALSE) {
     ');
   }
   else {
-    return t('You may quote other posts using <a href="!quote_help">[quote] tags</a>.', array("!quote_help" => url("filter/tips/$format", NULL, 'filter-quote')));
+    return t('You may quote other posts using [quote] tags.');
   }
 }
 
@@ -86,9 +85,9 @@ function quote_link($type, $post = 0, $main = 0) {
       $node = node_load(arg(1));
       if (in_array($node->type, variable_get('quote_node_types', array('blog', 'story'))) && $node->comment == COMMENT_NODE_READ_WRITE) {
         $links['quote'] = array(
-          'title' => t('Quote'),
+          'title' => t('quote'),
           'href' => "comment/reply/$post->nid/$post->cid",
-          'attributes' => array('title' => t('Jump to the first comment of this posting.')),
+          'attributes' => array('title' => t('Quote this post in your reply.')),
           'query' => 'quote=1'
         );
       }
@@ -96,7 +95,7 @@ function quote_link($type, $post = 0, $main = 0) {
     elseif ($type == 'node' && in_array($post->type, variable_get('quote_node_types', array('blog', 'story'))) && $post->comment == COMMENT_NODE_READ_WRITE && variable_get('quote_node_link_display', 1)) {
       // Display quote link for nodes only if the node is accepting comments, has the quote filter enabled and has quote_link_display set.
       $links['quote'] = array(
-        'title' => t('Quote'),
+        'title' => t('quote'),
         'href' => "comment/reply/$post->nid",
         'attributes' => array('title' => t('Quote this post in your reply.')),
         'query' => 'quote=1'
