@@ -87,7 +87,8 @@ function quote_link($type, $post = 0, $main = 0) {
     );
     // $post can be either a node or a comment.
     if ($type == 'comment') {
-      // Display quote link for comments only if the parent node is accepting comments and has the quote filter enabled.
+      // Display quote link for comments only if the parent node is accepting
+      // comments and has the quote filter enabled.
       $node = node_load(arg(1));
       if (in_array($node->type, variable_get('quote_node_types', array('blog', 'story'))) && $node->comment == COMMENT_NODE_READ_WRITE) {
         $link['href'] = "comment/reply/$post->nid/$post->cid";
@@ -95,7 +96,8 @@ function quote_link($type, $post = 0, $main = 0) {
       }
     }
     elseif ($type == 'node' && in_array($post->type, variable_get('quote_node_types', array('blog', 'story'))) && $post->comment == COMMENT_NODE_READ_WRITE && variable_get('quote_node_link_display', 1)) {
-      // Display quote link for nodes only if the node is accepting comments, has the quote filter enabled and has quote_link_display set.
+      // Display quote link for nodes only if the node is accepting comments,
+      // has the quote filter enabled and has quote_link_display set.
       $link['href'] = "comment/reply/$post->nid";
       $links['quote'] = $link;
     }
