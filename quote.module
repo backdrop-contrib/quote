@@ -88,7 +88,8 @@ function quote_link($type, $post = 0, $main = 0) {
           'title' => t('quote'),
           'href' => "comment/reply/$post->nid/$post->cid",
           'attributes' => array('title' => t('Quote this post in your reply.')),
-          'query' => 'quote=1'
+          'query' => 'quote=1',
+          'fragment' => 'comment-form'
         );
       }
     }
@@ -98,7 +99,8 @@ function quote_link($type, $post = 0, $main = 0) {
         'title' => t('quote'),
         'href' => "comment/reply/$post->nid",
         'attributes' => array('title' => t('Quote this post in your reply.')),
-        'query' => 'quote=1'
+        'query' => 'quote=1',
+        'fragment' => 'comment-form'
       );
     }
   }
