@@ -79,29 +79,27 @@ function quote_link($type, $post = 0, $main = 0) {
   $links = array();
 
   if (user_access('post comments')) {
+    $link = array(
+      'title' => t('quote'),
+      'attributes' => array('title' => t('Quote this post in your reply.')),
+      'query' => 'quote=1',
+      'fragment' => 'comment-form'
+    );
     // $post can be either a node or a comment.
     if ($type == 'comment') {
-      // Display quote link for comments only if the parent node is accepting comments and has the quote filter enabled.
+      // Display quote link for comments only if the parent node is accepting
+      // comments and has the quote filter enabled.
       $node = node_load(arg(1));
       if (in_array($node->type, variable_get('quote_node_types', array('blog', 'story'))) && $node->comment == COMMENT_NODE_READ_WRITE) {
-        $links['quote'] = array(
-          'title' => t('quote'),
-          'href' => "comment/reply/$post->nid/$post->cid",
-          'attributes' => array('title' => t('Quote this post in your reply.')),
-          'query' => 'quote=1',
-          'fragment' => 'comment-form'
-        );
+        $link['href'] = "comment/reply/$post->nid/$post->cid";
+        $links['quote'] = $link;
       }
     }
     elseif ($type == 'node' && in_array($post->type, variable_get('quote_node_types', array('blog', 'story'))) && $post->comment == COMMENT_NODE_READ_WRITE && variable_get('quote_node_link_display', 1)) {
-      // Display quote link for nodes only if the node is accepting comments, has the quote filter enabled and has quote_link_display set.
-      $links['quote'] = array(
-        'title' => t('quote'),
-        'href' => "comment/reply/$post->nid",
-        'attributes' => array('title' => t('Quote this post in your reply.')),
-        'query' => 'quote=1',
-        'fragment' => 'comment-form'
-      );
+      // Display quote link for nodes only if the node is accepting comments,
+      // has the quote filter enabled and has quote_link_display set.
+      $link['href'] = "comment/reply/$post->nid";
+      $links['quote'] = $link;
     }
   }
 
