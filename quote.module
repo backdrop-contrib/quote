@@ -90,12 +90,12 @@ function quote_link($type, $post = 0, $main = 0) {
       // Display quote link for comments only if the parent node is accepting
       // comments and has the quote filter enabled.
       $node = node_load(arg(1));
-      if (in_array($node->type, variable_get('quote_node_types', array('blog', 'story'))) && $node->comment == COMMENT_NODE_READ_WRITE) {
+      if (in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_READ_WRITE) {
         $link['href'] = "comment/reply/$post->nid/$post->cid";
         $links['quote'] = $link;
       }
     }
-    elseif ($type == 'node' && in_array($post->type, variable_get('quote_node_types', array('blog', 'story'))) && $post->comment == COMMENT_NODE_READ_WRITE && variable_get('quote_node_link_display', 1)) {
+    elseif ($type == 'node' && in_array($post->type, _quote_variable_get('node_types')) && $post->comment == COMMENT_NODE_READ_WRITE && _quote_variable_get('node_link_display')) {
       // Display quote link for nodes only if the node is accepting comments,
       // has the quote filter enabled and has quote_link_display set.
       $link['href'] = "comment/reply/$post->nid";
@@ -142,9 +142,9 @@ function quote_form_alter($form_id, &$form) {
       $quote = $comment->comment;
       $subject = $comment->subject;
     }
-    elseif ($nid && variable_get('quote_node_link_display', 1)) {
+    elseif ($nid && _quote_variable_get('node_link_display')) {
       $node = node_load(array('nid' => $nid));
-      if (in_array($node->type, variable_get('quote_node_types', array('blog', 'story')))) {
+      if (in_array($node->type, _quote_variable_get('node_types'))) {
         $quote = $node->body;
         $author = !empty($node->name) ? $node->name : variable_get('anonymous', 'Anonymous');
       }
@@ -157,53 +157,75 @@ function quote_form_alter($form_id, &$form) {
     }
     // Add quoted text and preserve existing content (signature etc.).
     $form['comment_filter']['comment']['#default_value'] = '[quote='. $author .']'. $quote ."[/quote]\n". $form['comment_filter']['comment']['#default_value'];
-    if (variable_get('quote_subject_required', 1)) {
+    if (_quote_variable_get('subject_required')) {
       $form['subject']['#required'] = TRUE;
     }
   }
 }
 
 /**
- * Menu Callback: quote module settings form. Not using hook_settings due to the
- * checkboxes element.
+ * Menu callback: quote module settings form.
  */
 function quote_settings_form() {
-  $form['quote'] = array('#type' => 'fieldset', '#title' => 'Quote module settings');
-  $form['quote']['quote_node_types'] = array(
+  $form['quote'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Quote module settings',
+    '#tree' => TRUE
+  );
+  $form['quote']['node_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Node associations'),
     '#description' => t('Select the node types to associate with the quote filter.'),
     '#options' => _quote_get_node_types(),
-    '#default_value' => variable_get('quote_node_types', array('blog', 'story'))
+    '#default_value' => _quote_variable_get('node_types')
   );
-  $form['quote']['quote_node_link_display'] = array(
+  $form['quote']['node_link_display'] = array(
     '#type' => 'checkbox',
     '#title' => t('Display the quote link for nodes'),
     '#description' => t('Leave this option disabled if you use a PHP or similar filter in your nodes. The quote link is always displayed for comments.'),
-    '#default_value' => variable_get('quote_node_link_display', 1)
+    '#default_value' => _quote_variable_get('node_link_display')
   );
-  $form['quote']['quote_subject_required'] = array(
+  $form['quote']['subject_required'] = array(
     '#type' => 'checkbox',
     '#title' => t('Make the comment subject field a required field'),
     '#description' => t('Making the comment subject field a required field will ensure that unsightly [quote] tags are not displayed.'),
-    '#default_value' => variable_get('quote_subject_required', 1)
+    '#default_value' => _quote_variable_get('subject_required')
   );
-  $form['submit'] = array('#type' => 'submit', '#value' => 'Save configuration');
 
-  return $form;
+  return system_settings_form($form);
 }
 
 /**
- * Process quote settings form submissions.
+ * Validate quote settings form submission.
  */
-function quote_settings_form_submit($form_id, $form_values) {
-  $types = array_filter($form_values['quote_node_types']);
-  variable_set('quote_node_types', array_keys($types));
-  variable_set('quote_node_link_display', $form_values['quote_node_link_display']);
-  variable_set('quote_subject_required', $form_values['quote_subject_required']);
+function quote_settings_form_validate($form_id, $form_values, $form) {
+  // Run the node type checkboxes through array_filter to strip unselected
+  // items.
+  form_set_value($form['quote']['node_types'], array_filter($form_values['quote']['node_types']));
+}
 
-  drupal_set_message('Configuration settings saved.');
-  cache_clear_all();
+/**
+ * Return a quote module variable.
+ *
+ * @param $name
+ *   The name of the variable to retrieve.
+ * @return
+ *   The value of the variable requested.
+ */
+function _quote_variable_get($name = NULL) {
+  static $variables = array();
+
+  if (empty($variables)) {
+    $defaults = array(
+      'node_types' => array('blog', 'story'),
+      'node_link_display' => 1,
+      'subject_required' => 1
+    );
+    $variables = variable_get('quote', array());
+    $variables = array_merge($defaults, $variables);
+  }
+
+  return $name ? $variables[$name] : $variables;
 }
 
 /**
