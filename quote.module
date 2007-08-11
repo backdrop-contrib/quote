@@ -7,11 +7,11 @@
 function quote_help($section) {
   switch ($section) {
     case 'admin/settings/quote':
-      return t('<p>The quote filter allows users to quote other posts in their 
-comments. Besides the following settings, the quote filter will need to be 
-enabled for each <a href="!input-format">input format</a> (as required). Please 
-make sure that the quote filter is arranged <em>after</em> any HTML filters and 
-<em>before</em> the line break filter. For more information, please visit the 
+      return t('<p>The quote filter allows users to quote other posts in their
+comments. Besides the following settings, the quote filter will need to be
+enabled for each <a href="!input-format">input format</a> (as required). Please
+make sure that the quote filter is arranged <em>after</em> any HTML filters and
+<em>before</em> the line break filter. For more information, please visit the
 <a href="!project-page">project page</a>.</p>', array('!input-format' => url('admin/settings/filters'), '!project-page' => url('http://drupal.org/project/quote', NULL, NULL, TRUE)));
   }
 }
@@ -26,7 +26,7 @@ function quote_menu($may_cache) {
     $items[] = array(
       'path' => 'admin/settings/quote',
       'title' => t('Quote'),
-      'callback' => 'drupal_get_form', 
+      'callback' => 'drupal_get_form',
       'callback arguments' => 'quote_settings_form',
       'access' => user_access('administer filters')
     );
@@ -136,7 +136,7 @@ function quote_filter($op, $delta = 0, $format = -1, $text = '') {
 function quote_filter_tips($delta, $format, $long = FALSE) {
   if ($long) {
     return t('
-      <p>Quoted content can be placed between [quote] tags in order to be displayed as an indented quote. Every [quote] tag <em>must</em> have a corresponding [/quote] tag. For example: 
+      <p>Quoted content can be placed between [quote] tags in order to be displayed as an indented quote. Every [quote] tag <em>must</em> have a corresponding [/quote] tag. For example:
       <pre>[quote]This is a simple quote.[/quote]</pre> is displayed as:</p>
       <div class="quote-msg"><div class="quote-author">Quote:</div>This is a simple quote.</div>
       <p>Additionally, there is an optional attribute which allows quotes to specify the original author.
@@ -230,7 +230,7 @@ function _quote_variable_get($name = NULL) {
 
 /**
  * Replace [quote] tags with markup for display.
- * 
+ *
  * @param $text
  *   The text with the [quote] tags that need to be replaced with HTML tags.
  *

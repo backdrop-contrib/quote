@@ -2,4 +2,3 @@
 name = Quote
 description = Allows users to quote posts or comments.
 dependencies = comment
-
