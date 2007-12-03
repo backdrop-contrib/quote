@@ -48,7 +48,7 @@ function quote_link($type, $post = 0, $main = 0) {
 
   if (user_access('post comments')) {
     $link = array(
-      'title' => t('quote'),
+      'title' => t('Quote'),
       'attributes' => array('title' => t('Quote this post in your reply.')),
       'query' => 'quote=1',
       'fragment' => 'comment-form'
@@ -60,6 +60,7 @@ function quote_link($type, $post = 0, $main = 0) {
       $node = node_load(arg(1));
       if (in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_READ_WRITE) {
         $link['href'] = "comment/reply/$post->nid/$post->cid";
+        $link['title'] = t('quote');
         $links['quote'] = $link;
       }
     }
