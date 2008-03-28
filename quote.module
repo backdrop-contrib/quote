@@ -2,42 +2,35 @@
 // $Id$
 
 /**
- * Implementation of hook_help().
+ * @file
+ * The quote module provides a filter and appropriate links that allow users to
+ * quote nodes and other comments in their own comments.
  */
-function quote_help($section) {
-  switch ($section) {
-    case 'admin/settings/quote':
-      return t('<p>The quote filter allows users to quote other posts in their
-comments. Besides the following settings, the quote filter will need to be
-enabled for each <a href="!input-format">input format</a> (as required). Please
-make sure that the quote filter is arranged <em>after</em> any HTML filters and
-<em>before</em> the line break filter. For more information, please visit the
-<a href="!project-page">project page</a>.</p>', array('!input-format' => url('admin/settings/filters'), '!project-page' => url('http://drupal.org/project/quote', NULL, NULL, TRUE)));
-  }
-}
 
 /**
  * Implementation of hook_menu().
  */
-function quote_menu($may_cache) {
+function quote_menu() {
   $items = array();
 
-  if ($may_cache) {
-    $items[] = array(
-      'path' => 'admin/settings/quote',
-      'title' => t('Quote'),
-      'description' => t('Configure the behaviour of the quote module.'),
-      'callback' => 'drupal_get_form',
-      'callback arguments' => 'quote_settings_form',
-      'access' => user_access('administer filters')
-    );
-  }
-  else {
-    // Reference quote.css, if it exists.
-    drupal_add_css(drupal_get_path('module', 'quote') .'/quote.css');
-  }
+  $items['admin/settings/quote'] = array(
+    'title' => 'Quote',
+    'description' => 'Configure the behaviour of the quote module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('quote_settings_form'),
+    'access arguments' => array('administer filters'),
+    'file' => 'quote.admin.inc'
+  );
 
   return $items;
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function quote_init() {
+  // Reference quote.css, if it exists.
+  drupal_add_css(drupal_get_path('module', 'quote') .'/quote.css');
 }
 
 /**
@@ -57,7 +50,7 @@ function quote_link($type, $post = 0, $main = 0) {
     if ($type == 'comment') {
       // Display quote link for comments only if the parent node is accepting
       // comments and has the quote filter enabled.
-      $node = node_load(arg(1));
+      $node = menu_get_object();
       if (in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_READ_WRITE) {
         $link['href'] = "comment/reply/$post->nid/$post->cid";
         $link['title'] = t('quote');
@@ -78,7 +71,7 @@ function quote_link($type, $post = 0, $main = 0) {
 /**
  * Implementation of hook_form_alter().
  */
-function quote_form_alter($form_id, &$form) {
+function quote_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'comment_form' && isset($_GET['quote']) && $_GET['quote']) {
     $nid = arg(2);
     $cid = arg(3);
@@ -163,47 +156,6 @@ function quote_filter_tips($delta, $format, $long = FALSE) {
   else {
     return t('You may quote other posts using [quote] tags.');
   }
-}
-
-/**
- * Menu callback: quote module settings form.
- */
-function quote_settings_form() {
-  $form['quote'] = array(
-    '#type' => 'fieldset',
-    '#title' => 'Quote module settings',
-    '#tree' => TRUE
-  );
-  $form['quote']['node_types'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Node associations'),
-    '#description' => t('Select the node types to associate with the quote filter.'),
-    '#options' => _quote_get_node_types(),
-    '#default_value' => _quote_variable_get('node_types')
-  );
-  $form['quote']['node_link_display'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Display the quote link for nodes'),
-    '#description' => t('Leave this option disabled if you use a PHP or similar filter in your nodes. The quote link is always displayed for comments.'),
-    '#default_value' => _quote_variable_get('node_link_display')
-  );
-  $form['quote']['subject_required'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Make the comment subject field a required field'),
-    '#description' => t('Making the comment subject field a required field will ensure that unsightly [quote] tags are not displayed.'),
-    '#default_value' => _quote_variable_get('subject_required')
-  );
-
-  return system_settings_form($form);
-}
-
-/**
- * Validate quote settings form submission.
- */
-function quote_settings_form_validate($form_id, $form_values, $form) {
-  // Run the node type checkboxes through array_filter to strip unselected
-  // items.
-  form_set_value($form['quote']['node_types'], array_filter($form_values['quote']['node_types']));
 }
 
 /**
