@@ -36,4 +36,6 @@ function quote_update_1() {
  */
 function quote_uninstall() {
   variable_del('quote');
+
+  drupal_set_message(t('The quote module has been uninstalled successfully.'));
 }
