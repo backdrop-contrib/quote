@@ -36,7 +36,7 @@ function quote_init() {
 /**
  * Implementation of hook_link().
  */
-function quote_link($type, $post = 0, $main = 0) {
+function quote_link($type, $post, $teaser = FALSE) {
   $links = array();
 
   if (user_access('post comments')) {
