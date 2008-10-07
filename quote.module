@@ -15,7 +15,7 @@ function quote_menu() {
 
   $items['admin/settings/quote'] = array(
     'title' => 'Quote',
-    'description' => t('Configure the behaviour of the quote module.'),
+    'description' => 'Configure the behaviour of the quote module.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('quote_settings_form'),
     'access arguments' => array('administer filters'),
