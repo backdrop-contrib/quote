@@ -26,6 +26,20 @@ function quote_menu() {
 }
 
 /**
+ * Implementation of hook_theme().
+ */
+function quote_theme() {
+  return array(
+    'quote' => array(
+      'arguments' => array(
+        'quote_content' => NULL,
+        'quote_author' => NULL
+      )
+    )
+  );
+}
+
+/**
  * Implementation of hook_init().
  */
 function quote_init() {
@@ -183,29 +197,6 @@ function _quote_variable_get($name = NULL) {
 }
 
 /**
- * Replace [quote] tags with markup for display.
- *
- * @param $text
- *   The text with the [quote] tags that need to be replaced with HTML tags.
- *
- * @return $text
- *   Filtered text.
- *
- * @todo Fix this with one preg_replace.
- */
-function _quote_filter_process($text) {
-  // Thanks: function based on code from punbb.org
-  if (strstr($text, '[quote')) {
-    $pre = '<div class="quote-msg"><div class="quote-author">';
-    $post = '</div>';
-    $markup = $pre . t('Quote:') . $post;
-    $text = str_replace(array('[quote]', '[quote=]', '[/quote]'), array($markup, $markup, $post), $text);
-    $text = preg_replace('#\[quote=(?:"|\')?(.*?)["\']?(?:"|\')?\]#s', $pre . t('%name wrote:', array('%name' => '\\1')) . $post, $text);
-  }
-  return $text;
-}
-
-/**
  * Helper function that returns node types.
  */
 function _quote_get_node_types($keys = FALSE) {
@@ -219,4 +210,68 @@ function _quote_get_node_types($keys = FALSE) {
   }
 
   return array_keys($node_types);
+}
+
+/**
+ * Replace [quote] tags with markup for display.
+ *
+ * @param $text
+ *   The text with the [quote] tags that need to be replaced with HTML tags.
+ *
+ * @return $text
+ *   Filtered text.
+ */
+function _quote_filter_process($text) {
+  if (strstr($text, '[quote')) {
+    // Single regexp with callback allowing for theme calls and quote
+    // nesting/recursion with regexp code from
+    // http://de.php.net/manual/en/function.preg-replace-callback.php#85836
+    $text = preg_replace_callback('#\[(quote.*?)]((?>\[(?!/?quote[^[]*?])|[^[]|(?R))*)\[/quote]#is', '_quote_filter_process_callback', $text);
+  }
+
+  return $text;
+}
+
+/**
+ * Generate and return the quote theming for a quote occurence found by
+ * _quote_filter_process.
+ *
+ * @param $matches
+ *   The RegExp matches (for author and quote) found in _quote_filter_process.
+ *
+ * @return $output_quote
+ *   Themed quote.
+ */
+function _quote_filter_process_callback($matches) {
+  $quote_author = trim(substr($matches[1], 6));
+  $quote_content = _quote_filter_process($matches[2]);
+
+  $quote_output = theme('quote', $quote_content, $quote_author);
+
+  return $quote_output;
+}
+
+/**
+ * Theme a quote with its content and author - default theme function.
+ *
+ * @param $quote_content
+ *   The quote's string content.
+ * @param $quote_author
+ *   The quote author's name.
+ *
+ * @return $output_quote
+ *   Themed quote.
+ */
+function theme_quote($quote_content, $quote_author) {
+  $quote_output = '<div class="quote-msg">';
+  if ($quote_author != '') {
+    $quote_output .= '<div class="quote-author">'. t('%name wrote:', array('%name' => $quote_author)) .'</div>';
+  }
+  else {
+    $quote_output .= '<div class="quote-author">'. t('Quote:') .'</div>';
+  }
+  $quote_output .= $quote_content;
+  $quote_output .= '</div>';
+
+  return $quote_output;
 }
