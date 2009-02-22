@@ -222,7 +222,7 @@ function _quote_get_node_types($keys = FALSE) {
  *   Filtered text.
  */
 function _quote_filter_process($text) {
-  if (strstr($text, '[quote')) {
+  if (stristr($text, '[quote')) {
     // Single regexp with callback allowing for theme calls and quote
     // nesting/recursion with regexp code from
     // http://de.php.net/manual/en/function.preg-replace-callback.php#85836
