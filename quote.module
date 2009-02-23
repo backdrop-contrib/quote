@@ -131,7 +131,7 @@ function quote_filter($op, $delta = 0, $format = -1, $text = '') {
     case 'list':
       return array(0 => t('Quote filter'));
     case 'description':
-      return t('Converts [quote] tags into &lt;div&gt; tags. Must apply after HTML filters.');
+      return t('Converts [quote] tags into &lt;div&gt; tags. Must usually apply after HTML filters unless an exception is made for &lt;div&gt; tags.');
     case 'process':
       return _quote_filter_process($text);
     default:
