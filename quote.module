@@ -144,28 +144,37 @@ function quote_filter($op, $delta = 0, $format = -1, $text = '') {
  */
 function quote_filter_tips($delta, $format, $long = FALSE) {
   if ($long) {
-    return t('
-      <p>Quoted content can be placed between [quote] tags in order to be displayed as an indented quote. Every [quote] tag <em>must</em> have a corresponding [/quote] tag. For example:
-      <pre>[quote]This is a simple quote.[/quote]</pre> is displayed as:</p>
-      <div class="quote-msg"><div class="quote-author">Quote:</div>This is a simple quote.</div>
-      <p>Additionally, there is an optional attribute which allows quotes to specify the original author.
-      <pre>[quote=Mr. Drupal]This is a quote with an attribution line.[/quote]
-      </pre> is displayed as:</p>
-      <div class="quote-msg"><div class="quote-author">Mr. Drupal wrote:</div>This is a quote with an attribution line.</div>
-      <p>Finally, multiple [quote] tags can be nested within one another. Just remember that every [quote] tag <strong>must</strong> have a corresponding [/quote] tag.
-      <pre>
-      [quote]I think she says it best...
-      [quote=Ms. Quotation]This is a quote nested within another quote.[/quote]
-      but you can\'t argue with
-      [quote=Ms. Reply]The more quotes, the merrier.
-      Just don\'t get too carried away.[/quote]
-      And I have nothing more to say.[/quote]</pre> is displayed as:</p>
-      <div class="quote-msg"><div class="quote-author">Quote:</div>I think she says it best...
-      <div class="quote-msg"><div class="quote-author">Ms. Quotation wrote:</div>This is a quote nested within another quote.</div>
-      but you can\'t argue with
-      <div class="quote-msg"><div class="quote-author">Ms. Reply wrote:</div>The more quotes, the merrier. Just don\'t get too carried away.</div>
-      And I have nothing more to say.</div>
-    ');
+    // These string are wrapped in <pre> tags.
+    $simple_quote = '[quote]This is a simple quote.[/quote]';
+    $attributed_quote = '[quote=Mr. Drupal]This is a quote with an attribution line.[/quote]';
+    $nested_quote = '[quote]I think she says it best...
+[quote=Ms. Quotation]This is a quote nested within another quote.[/quote]
+but you can\'t argue with
+[quote=Ms. Reply]The more quotes, the merrier.
+Just don\'t get too carried away.[/quote]
+And I have nothing more to say.[/quote]';
+    return t('<p>Quoted content can be placed between [quote] tags in order to
+      be displayed as an indented quote. Every [quote] tag <em>must</em> have a
+      corresponding [/quote] tag. For example:
+      <pre>!simple-quote</pre> is displayed as:</p>
+      !simple-quote-processed
+      <p>Additionally, there is an optional attribute which allows quotes to
+      specify the original author.
+      <pre>!attributed-quote</pre> is displayed as:</p>
+      !attributed-quote-processed
+      <p>Finally, multiple [quote] tags can be nested within one another. Just
+      remember that every [quote] tag <strong>must</strong> have a corresponding
+      [/quote] tag.
+      <pre>!nested-quote</pre> is displayed as:</p>
+      !nested-quote-processed', array(
+        '!simple-quote' => $simple_quote,
+        '!simple-quote-processed' => _quote_filter_process($simple_quote),
+        '!attributed-quote' => $attributed_quote,
+        '!attributed-quote-processed' => _quote_filter_process($attributed_quote),
+        '!nested-quote' => $nested_quote,
+        '!nested-quote-processed' => _quote_filter_process($nested_quote)
+      )
+    );
   }
   else {
     return t('You may quote other posts using [quote] tags.');
