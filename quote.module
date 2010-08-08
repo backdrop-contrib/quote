@@ -100,7 +100,6 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
         $author = (!empty($comment->name)) ? $comment->name : variable_get('anonymous', 'Anonymous');
       }
       $quote = $comment->comment;
-      $subject = $comment->subject;
     }
     elseif ($nid && _quote_variable_get('node_link_display')) {
       $node = node_load(array('nid' => $nid));
