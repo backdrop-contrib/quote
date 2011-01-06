@@ -1,5 +1,5 @@
 ; $Id$
 name = Quote
 description = Allows users to quote posts or comments.
-core = 6.x
+core = 7.x
 dependencies[] = comment
