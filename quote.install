@@ -2,12 +2,18 @@
 // $Id$
 
 /**
- * Implementation of hook_install().
+ * @file
+ * The installation script for the quote module
+ */
+
+/**
+ * Implements hook_install().
  */
 function quote_install() {
   $ret = array();
 
-  drupal_set_message(t('The quote module has been installed successfully.'));
+  $t = get_t();
+  drupal_set_message($t('The quote module has been installed successfully.'));
 
   return $ret;
 }
@@ -32,10 +38,11 @@ function quote_update_1() {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function quote_uninstall() {
   variable_del('quote');
 
-  drupal_set_message(t('The quote module has been uninstalled successfully.'));
+  $t = get_t();
+  drupal_set_message($t('The quote module has been uninstalled successfully.'));
 }

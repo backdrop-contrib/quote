@@ -44,7 +44,7 @@ function quote_theme() {
  */
 function quote_init() {
   // Reference quote.css, if it exists.
-  drupal_add_css(drupal_get_path('module', 'quote') .'/quote.css');
+  drupal_add_css(drupal_get_path('module', 'quote') . '/quote.css');
 }
 
 /**
@@ -83,7 +83,7 @@ function quote_link($type, $post, $teaser = FALSE) {
 }
 
 /**
- * Implements of hook_form_alter().
+ * Implements hook_form_alter().
  */
 function quote_form_alter(&$form, &$form_state, $form_id) {
   // The explanation for the $_POST check is further below.
@@ -117,7 +117,7 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Add quoted text and preserve existing content (signature etc.).
-    $form['comment_filter']['comment']['#default_value'] = '[quote='. $author .']'. trim($quote) ."[/quote]\n". $form['comment_filter']['comment']['#default_value'];
+    $form['comment_filter']['comment']['#default_value'] = '[quote=' . $author . ']' . trim($quote) . "[/quote]\n" . $form['comment_filter']['comment']['#default_value'];
 
     if (_quote_variable_get('subject_required')) {
       $form['subject']['#required'] = TRUE;
@@ -253,7 +253,7 @@ function _quote_filter_process($text) {
  *   Themed quote.
  */
 function _quote_filter_process_callback($matches) {
-  $quote_author = trim(substr($matches[1], 6));
+  $quote_author = trim(drupal_substr($matches[1], 6));
   $quote_content = _quote_filter_process($matches[2]);
 
   $quote_output = theme('quote', array('quote_content' => $quote_content, 'quote_author' => $quote_author));
@@ -277,10 +277,10 @@ function theme_quote($vars) {
   $quote_author = $vars['quote_author'];
   $quote_output = '<div class="quote-msg">';
   if ($quote_author != '') {
-    $quote_output .= '<div class="quote-author">'. t('%name wrote:', array('%name' => $quote_author)) .'</div>';
+    $quote_output .= '<div class="quote-author">' . t('%name wrote:', array('%name' => $quote_author)) . '</div>';
   }
   else {
-    $quote_output .= '<div class="quote-author">'. t('Quote:') .'</div>';
+    $quote_output .= '<div class="quote-author">' . t('Quote:') . '</div>';
   }
   $quote_output .= $quote_content;
   $quote_output .= '</div>';
