@@ -48,38 +48,45 @@ function quote_init() {
 }
 
 /**
- * Implements hook_link().
+ * Implements hook_node_view().
  */
-function quote_link($type, $post, $teaser = FALSE) {
-  $links = array();
-
-  if (user_access('post comments')) {
-    $link = array(
+function quote_node_view($node, $view_mode) {
+  if (user_access('post comments') && in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_OPEN && _quote_variable_get('node_link_display')) {
+    $links['quote'] = array(
       'title' => t('Quote'),
+      'href' => "comment/reply/$node->nid",
       'attributes' => array('title' => t('Quote this post in your reply.')),
-      'query' => 'quote=1',
+      'query' => array('quote' => 1),
       'fragment' => 'comment-form'
     );
-    // $post can be either a node or a comment.
-    if ($type == 'comment') {
-      // Display quote link for comments only if the parent node is accepting
-      // comments and has the quote filter enabled.
-      $node = menu_get_object();
-      if (in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_READ_WRITE) {
-        $link['href'] = "comment/reply/$post->nid/$post->cid";
-        $link['title'] = t('quote');
-        $links['quote'] = $link;
-      }
-    }
-    elseif ($type == 'node' && in_array($post->type, _quote_variable_get('node_types')) && $post->comment == COMMENT_NODE_READ_WRITE && _quote_variable_get('node_link_display')) {
-      // Display quote link for nodes only if the node is accepting comments,
-      // has the quote filter enabled and has quote_link_display set.
-      $link['href'] = "comment/reply/$post->nid";
-      $links['quote'] = $link;
-    }
-  }
 
-  return $links;
+    $node->content['links']['quote'] = array(
+      '#links' => $links,
+      '#attributes' => array('class' => array('links', 'inline')),
+    );
+  }
+}
+
+/**
+ * Implements hook_comment_view().
+ */
+function quote_comment_view($comment) {
+  if (user_access('post comments')) {
+    $node = node_load($comment->nid);
+    if (in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_OPEN) {
+      $links['quote'] = array(
+        'title' => t('quote'),
+        'href' => "comment/reply/$node->nid/$comment->cid",
+        'attributes' => array('title' => t('Quote this post in your reply.')),
+        'query' => array('quote' => 1),
+        'fragment' => 'comment-form'
+      );
+    }
+    $comment->content['links']['quote'] = array(
+      '#links' => $links,
+      '#attributes' => array('class' => array('links', 'inline')),
+    );
+  }
 }
 
 /**
@@ -87,25 +94,25 @@ function quote_link($type, $post, $teaser = FALSE) {
  */
 function quote_form_alter(&$form, &$form_state, $form_id) {
   // The explanation for the $_POST check is further below.
-  if ($form_id == 'comment_form' && (isset($_POST['quote']) || isset($_GET['quote']) && $_GET['quote'])) {
+  if ($form['#id'] == 'comment-form' && (isset($_POST['quote']) || isset($_GET['quote']) && $_GET['quote'])) {
     $nid = arg(2);
     $cid = arg(3);
 
     if ($cid) {
       $comment = comment_load($cid);
-
       if ($comment->uid) {
         $author = $comment->registered_name;
       }
       else {
         $author = (!empty($comment->name)) ? $comment->name : variable_get('anonymous', 'Anonymous');
       }
-      $quote = $comment->comment;
+      $quote = $comment->comment_body[LANGUAGE_NONE][0]['value'];
     }
     elseif ($nid && _quote_variable_get('node_link_display')) {
       $node = node_load($nid);
+
       if (in_array($node->type, _quote_variable_get('node_types'))) {
-        $quote = $node->body;
+        $quote = $node->body[$node->language][0]['safe_value'];
         $author = !empty($node->name) ? $node->name : variable_get('anonymous', 'Anonymous');
       }
       else {
@@ -117,7 +124,7 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Add quoted text and preserve existing content (signature etc.).
-    $form['comment_filter']['comment']['#default_value'] = '[quote=' . $author . ']' . trim($quote) . "[/quote]\n" . $form['comment_filter']['comment']['#default_value'];
+    $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = '[quote=' . $author . ']' . trim($quote) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
 
     if (_quote_variable_get('subject_required')) {
       $form['subject']['#required'] = TRUE;
