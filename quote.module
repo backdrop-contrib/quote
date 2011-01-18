@@ -62,7 +62,7 @@ function quote_node_view($node, $view_mode) {
 
     $node->content['links']['quote'] = array(
       '#links' => $links,
-      '#attributes' => array('class' => array('links', 'inline')),
+      '#attributes' => array('class' => array('links', 'inline'))
     );
   }
 }
@@ -84,7 +84,7 @@ function quote_comment_view($comment) {
     }
     $comment->content['links']['quote'] = array(
       '#links' => $links,
-      '#attributes' => array('class' => array('links', 'inline')),
+      '#attributes' => array('class' => array('links', 'inline'))
     );
   }
 }
@@ -146,8 +146,9 @@ function quote_filter_info() {
   $filters['quote'] = array(
     'title' => t('Converts [quote] tags into &lt;div&gt; tags. Must usually apply after HTML filters unless an exception is made for &lt;div&gt; tags.'),
     'process callback' => '_quote_filter_process',
-    'tips callback' => 'quote_filter_tips',
+    'tips callback' => 'quote_filter_tips'
   );
+
   return $filters;
 }
 
