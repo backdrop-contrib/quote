@@ -9,22 +9,21 @@ This module also features a filter which translates the special markup into html
 code.
 
 When output by Drupal, the quote will be displayed with special formatting to 
-indicate the material has been quoted.
+indicate the material which has been quoted.
 
 
 Installation
 ------------
 
-The "quote.module" and "quote.css" files should be uploaded to "modules/quote/".
-
-Quote.module must be enabled via the 'administer/modules' interface. 
-
+The module should be installed within an appropriate module directory such as
+'sites/all/modules/quote'. Once installed, it can be enabled via the module
+administration interface at 'admin/modules'.
 
 Filter
 ------
 
-The Quote filter should be activated for each input format that you want to have
-it available (input filters are edited via the 'administer/filters' interface).
+The Quote filter should be activated for each text format that it needs to be a 
+part of. Text formats can be configured via 'admin/config/content/formats'.
 
 For best effect, the Quote filter must be applied *after* any filters that 
 replace HTML, and *before* the Linebreak filter. Or conversely, if
@@ -49,9 +48,9 @@ Settings
 --------
 
 The Quote module can be configured further through its settings page at
-admin/quote. This page allows the filter to be associated with specific node 
-types, control if the quote link is displayed for nodes (as opposed to comments)
-and so on.
+'admin/config/content/quote'. This page allows the filter to be associated with
+specific node types, control if the quote link is displayed for nodes (as 
+opposed to comments) and so on.
 
 Format
 ------
@@ -89,5 +88,9 @@ Project navigation
 
 Quote module settings page: admin -> quote.
 Filter management: admin -> input formats
+
+Credits
+-------
+Author/Maintainer: Zen / |gatsby| / Karthik Kumar : http://drupal.org/user/21209
 
 Project URL: http://drupal.org/project/quote
