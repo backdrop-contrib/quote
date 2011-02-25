@@ -1,5 +1,4 @@
 # translation of it.po to Italian
-# $Id$
 # Italian translation of Drupal (quote module)
 # Copyright 2007 Michele Comignano <comick@gmail.com>
 # Generated from files:
