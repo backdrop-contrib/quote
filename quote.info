@@ -1,4 +1,3 @@
-; $Id$
 name = Quote
 description = Allows users to quote posts or comments.
 core = 7.x
