@@ -3,13 +3,11 @@ Quote.module
 
 This module adds a 'quote' link below nodes and comments. When clicked, the 
 contents of the node or comment are placed into a new comment enclosed with 
-special markup that indicates it is quoted material. 
+special markup that indicates that it is quoted material. 
 
-This module also features a filter which translates the special markup into html
-code.
-
-When output by Drupal, the quote will be displayed with special formatting to 
-indicate the material which has been quoted.
+This module subsequently uses a filter to translate the special markup into HTML
+code. When output by Drupal, the quote will be displayed with special formatting
+to indicate the material which has been quoted.
 
 
 Installation
@@ -91,6 +89,6 @@ Filter management: admin -> input formats
 
 Credits
 -------
-Author/Maintainer: Zen / |gatsby| / Karthik Kumar : http://drupal.org/user/21209
+Author/Maintainer: Zen / |gatsby| / Karthik Kumar [http://drupal.org/user/21209]
 
 Project URL: http://drupal.org/project/quote
