@@ -194,12 +194,13 @@ And I have nothing more to say.[/quote]';
  */
 function quote_wysiwyg_plugin($editor, $version) {
   switch ($editor) {
-    case 'quote':
+    case 'tinymce':
       if ($version > 3) {
         return array(
           'quote' => array(
             'path' => drupal_get_path('module', 'quote') .'/wysiwyg/editor_plugin.js',
             'buttons' => array('quote' => t('Quote')),
+            'url' => 'http://drupal.org/project/quote',
             'load' => TRUE,
           ),
         );
