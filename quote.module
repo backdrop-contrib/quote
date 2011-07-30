@@ -190,6 +190,25 @@ And I have nothing more to say.[/quote]';
 }
 
 /**
+ * Implementation of hook_wysiwyg_plugin().
+ */
+function quote_wysiwyg_plugin($editor, $version) {
+  switch ($editor) {
+    case 'quote':
+      if ($version > 3) {
+        return array(
+          'quote' => array(
+            'path' => drupal_get_path('module', 'quote') .'/wysiwyg/editor_plugin.js',
+            'buttons' => array('quote' => t('Quote')),
+            'load' => TRUE,
+          ),
+        );
+      }
+      break;
+  }
+}
+
+/**
  * Return a quote module variable.
  *
  * @param $name
