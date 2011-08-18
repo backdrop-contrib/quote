@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @file
+ */
 /**
  * Implementation of hook_install().
  */
