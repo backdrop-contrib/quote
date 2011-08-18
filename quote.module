@@ -190,23 +190,17 @@ And I have nothing more to say.[/quote]';
 }
 
 /**
- * Implementation of hook_wysiwyg_plugin().
+ * Register a directory containing Wysiwyg plugins.
+ *
+ * @param $type
+ *   The type of objects being collected: either 'plugins' or 'editors'.
+ * @return
+ *   A sub-directory of the implementing module that contains the corresponding
+ *   plugin files. This directory must only contain integration files for
+ *   Wysiwyg module.
  */
-function quote_wysiwyg_plugin($editor, $version) {
-  switch ($editor) {
-    case 'tinymce':
-      if ($version > 3) {
-        return array(
-          'quote' => array(
-            'path' => drupal_get_path('module', 'quote') .'/wysiwyg/editor_plugin.js',
-            'buttons' => array('quote' => t('Quote')),
-            'url' => 'http://drupal.org/project/quote',
-            'load' => TRUE,
-          ),
-        );
-      }
-      break;
-  }
+function quote_wysiwyg_include_directory($type) {
+  return 'wysiwyg_plugins';
 }
 
 /**
