@@ -3,7 +3,7 @@
  *
  *
  *
- * @author Kálmán Hosszu - hosszu.kalman@gmail.com - http://premiumcmsthemes.com http://kalman-hosszu.com
+ * @author Kálmán Hosszu - hosszu.kalman@gmail.com
  */
 
 (function() {
