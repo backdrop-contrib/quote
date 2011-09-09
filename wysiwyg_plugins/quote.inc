@@ -1,8 +1,8 @@
 <?php
 /**
  * @file
- * 
- * 
+ *
+ *
  *
  * @author Kálmán Hosszu - hosszu.kalman@gmail.com
  */
@@ -12,7 +12,7 @@
  */
 function quote_quote_plugin() {
   $plugins = array();
-  
+
   $plugins['quote'] = array(
     'title' => t('Quote'),
     'vendor url' => 'http://drupal.org/project/quote',

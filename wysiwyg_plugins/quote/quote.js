@@ -1,7 +1,7 @@
 /**
  * @file
- * 
- * 
+ *
+ *
  *
  * @author Kálmán Hosszu - hosszu.kalman@gmail.com
  */
@@ -9,7 +9,7 @@
 (function ($) {
 
 Drupal.wysiwyg.plugins['quote'] = {
-  
+
   /**
    * Execute the button.
    */
@@ -17,5 +17,5 @@ Drupal.wysiwyg.plugins['quote'] = {
     Drupal.wysiwyg.instances[instanceId].insert('[quote]' + data.content + '[/quote]');
   }
 }
-  
+
 })(jQuery);
