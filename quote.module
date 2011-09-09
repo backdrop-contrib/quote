@@ -200,7 +200,7 @@ And I have nothing more to say.[/quote]';
  *   Wysiwyg module.
  */
 function quote_wysiwyg_include_directory($type) {
-  return 'wysiwyg_plugins';
+  return 'wysiwyg';
 }
 
 /**
