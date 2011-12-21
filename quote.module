@@ -111,7 +111,9 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
       $node = node_load($nid);
 
       if (in_array($node->type, _quote_variable_get('node_types'))) {
-        $quote = $node->body[$node->language][0]['safe_value'];
+        // Certain text formats provide a sanitised "safe_value". Others do not.
+        $body = $node->body[$node->language][0];
+        $quote = isset($body['safe_value']) ? $body['safe_value'] : $body['value'];
         $author = !empty($node->name) ? $node->name : variable_get('anonymous', 'Anonymous');
       }
       else {
