@@ -30,7 +30,7 @@ before them. Filters can be rearranged by using the weight selectors within the
 'rearrange filters' tab.
 
 Additionally, the Quote filter must be applied *before* the BBCode filter if you
-have the optional bbcode.module installed.
+have the optional BBcode installed.
 
 As the quote filter accesses the node (being quoted) directly, any content 
 within will be displayed without any processing. For example, if a user is 
@@ -66,29 +66,32 @@ There is an optional attribute which allows quotes to cite the author:
 Theme
 -----
 
-There are two css rules located in "quote.css" which can be altered to change
+There are two css rules located in "quote.css" which can be overridden to change
 the display of the quotes.
 
 'quote-msg' controls the display of the quote content.
 'quote-author' controls the display of the attribution line.
 
-The default "quote.css" rules are designed for Drupal's default Bluemarine 
-theme. By default, quoted content is placed into an indented box, which has a 
+The default "quote.css" rules are designed for Drupal's default Bartik theme.
+By default, quoted content is placed into an indented box, which has a 
 light gray background.
 
-Alternatively, the rules from "quote.css" can be copied into your theme's
-"style.css" files. If you do this, remember to remove "quote.css" from the
-"modules/quote/" folder.
+As mentioned above, CSS rules are meant to be overridden. In other words, there
+should never be a need to directly edit the CSS (or for that matter, any other)
+file in the module's directory.
 
+If the markup used to display the quote needs to be changed, this can be done by
+overriding the theme function theme_quote() from within a theme.
 
 Project navigation
 ------------------
 
-Quote module settings page: admin -> quote.
-Filter management: admin -> input formats
+Settings: Administration -> Configuration -> Content authoring -> Quote
+Filters : Administration -> Configuration -> Content authoring -> Text formats
 
 Credits
 -------
-Author/Maintainer: Zen / |gatsby| / Karthik Kumar [http://drupal.org/user/21209]
+Maintainer: Kálmán Hosszu [http://drupal.org/user/267481]
+Maintainer: Zen / |gatsby| / Karthik Kumar [http://drupal.org/user/21209]
 
 Project URL: http://drupal.org/project/quote
