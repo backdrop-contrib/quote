@@ -80,11 +80,11 @@ function quote_comment_view($comment) {
         'query' => array('quote' => 1),
         'fragment' => 'comment-form'
       );
+      $comment->content['links']['quote'] = array(
+        '#links' => $links,
+        '#attributes' => array('class' => array('links', 'inline'))
+      );
     }
-    $comment->content['links']['quote'] = array(
-      '#links' => $links,
-      '#attributes' => array('class' => array('links', 'inline'))
-    );
   }
 }
 
