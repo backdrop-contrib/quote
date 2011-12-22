@@ -1,7 +1,6 @@
 <?php
 /**
- * @file quote.inc
- *
+ * @file
  * Wysiwyg module's plugin file.
  *
  */
