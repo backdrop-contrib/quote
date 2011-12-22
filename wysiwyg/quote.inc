@@ -7,7 +7,7 @@
  */
 
 /**
- * Implementation of hook_wysiwyg_plugin().
+ * Implements hook_wysiwyg_plugin().
  */
 function quote_quote_plugin() {
   $plugins = array();
