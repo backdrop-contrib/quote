@@ -196,6 +196,16 @@ And I have nothing more to say.[/quote]';
 }
 
 /**
+ * Implements hook_views_api().
+ */
+function quote_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'quote') . '/views',
+  );
+}
+
+/**
  * Return a quote module variable.
  *
  * @param $name

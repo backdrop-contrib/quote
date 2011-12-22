@@ -1,4 +1,7 @@
 name = Quote
 description = Allows users to quote posts or comments.
 core = 7.x
+
 dependencies[] = comment
+
+files[] = views/quote_handler_field_comment_link_quote.inc
