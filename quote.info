@@ -5,3 +5,4 @@ core = 7.x
 dependencies[] = comment
 
 files[] = views/quote_handler_field_comment_link_quote.inc
+files[] = tests/quote.test
