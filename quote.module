@@ -42,7 +42,6 @@ function quote_theme() {
  * Implements hook_init().
  */
 function quote_init() {
-  // Reference quote.css, if it exists.
   drupal_add_css(drupal_get_path('module', 'quote') . '/quote.css');
 }
 
