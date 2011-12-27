@@ -1,12 +1,11 @@
+.quote-author {
+  display: inline;
+  margin: 0 0 1em 0;
+  font-weight: bold;
+}
 
 .quote-msg {
-  margin: 1em 2em 1em 2em;
   padding: 1em;
   border: 1px solid #DDD;
   background-color: #F6F6F6;
-}
-.quote-author {
-  display: block;
-  font-weight: bold;
-  margin: 0 0 1em 0;
 }

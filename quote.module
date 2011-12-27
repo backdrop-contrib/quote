@@ -293,7 +293,7 @@ function _quote_filter_process_callback($matches) {
 function theme_quote($vars) {
   $quote_content = $vars['quote_content'];
   $quote_author = $vars['quote_author'];
-  $quote_output = '<div class="quote-msg">';
+  $quote_output = '<blockquote class="quote-msg">';
   if ($quote_author != '') {
     $quote_output .= '<div class="quote-author">' . t('%name wrote:', array('%name' => $quote_author)) . '</div>';
   }
@@ -301,7 +301,7 @@ function theme_quote($vars) {
     $quote_output .= '<div class="quote-author">' . t('Quote:') . '</div>';
   }
   $quote_output .= $quote_content;
-  $quote_output .= '</div>';
+  $quote_output .= '</blockquote>';
 
   return $quote_output;
 }
