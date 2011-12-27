@@ -24,13 +24,21 @@ The Quote filter should be activated for each text format that it needs to be a
 part of. Text formats can be configured via 'admin/config/content/formats'.
 
 For best effect, the Quote filter must be applied *after* any filters that 
-replace HTML, and *before* the Linebreak filter. Or conversely, if
-HTML filters consider <div> tags to be valid, the quote filter can be placed
-before them. Filters can be rearranged by using the weight selectors within the
-'rearrange filters' tab.
+replace HTML, and *before* the Line-break filter. Or conversely, if
+HTML filters consider <blockquote> and <div> tags to be valid, the quote filter
+can be placed before them. Filters can be rearranged by using the weight
+selectors within the 'Filter processing order' section.
 
 Additionally, the Quote filter must be applied *before* the BBCode filter if you
 have the optional BBcode module installed.
+
+An example of a filter processing order that works well is as follows:
+
+  * HTML Filter
+  * URL Filter
+  * Quote Filter
+  * Line-break filter
+  * HTML Corrector filter
 
 As the quote filter accesses the node (being quoted) directly, any content 
 within will be displayed without any processing. For example, if a user is 
