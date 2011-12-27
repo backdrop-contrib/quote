@@ -30,7 +30,7 @@ before them. Filters can be rearranged by using the weight selectors within the
 'rearrange filters' tab.
 
 Additionally, the Quote filter must be applied *before* the BBCode filter if you
-have the optional BBcode installed.
+have the optional BBcode module installed.
 
 As the quote filter accesses the node (being quoted) directly, any content 
 within will be displayed without any processing. For example, if a user is 
@@ -48,7 +48,7 @@ Settings
 The Quote module can be configured further through its settings page at
 'admin/config/content/quote'. This page allows the filter to be associated with
 specific node types, control if the quote link is displayed for nodes (as 
-opposed to comments) and so on.
+opposed to comments), and so on.
 
 Format
 ------
