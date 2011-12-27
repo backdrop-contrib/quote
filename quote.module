@@ -124,7 +124,7 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Add quoted text and preserve existing content (signature etc.).
-    $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = '[quote=' . $author . ']' . trim($quote) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
+    $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = "[quote=$author]" . trim($quote) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
 
     if (_quote_variable_get('subject_required')) {
       $form['subject']['#required'] = TRUE;
