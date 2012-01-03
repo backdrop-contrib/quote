@@ -205,6 +205,21 @@ function quote_views_api() {
 }
 
 /**
+ * Implements hook_wysiwyg_include_directory(). Registers the wysiwyg directory
+ * as the one containing the plugin implementation.
+ *
+ * @param $type
+ *   The type of objects being collected: either 'plugins' or 'editors'.
+ * @return
+ *   A sub-directory of the implementing module that contains the corresponding
+ *   plugin files. This directory must only contain integration files for
+ *   Wysiwyg module.
+ */
+function quote_wysiwyg_include_directory($type) {
+  return 'wysiwyg';
+}
+
+/**
  * Return a quote module variable.
  *
  * @param $name
