@@ -43,12 +43,6 @@ function quote_settings_form() {
     '#description' => t('Leave this option disabled if you use a PHP or similar filter in your nodes. The quote link is always displayed for comments.'),
     '#default_value' => _quote_variable_get('node_link_display')
   );
-  $form['quote']['subject_required'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Make the comment subject field a required field'),
-    '#description' => t('Making the comment subject field a required field will ensure that unsightly [quote] tags are not displayed.'),
-    '#default_value' => _quote_variable_get('subject_required')
-  );
 
   return system_settings_form($form);
 }
