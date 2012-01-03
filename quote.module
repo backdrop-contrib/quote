@@ -96,46 +96,27 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     $nid = arg(2);
     $cid = arg(3);
 
-    if ($cid) {
-      $comment = comment_load($cid);
-      if ($comment->uid) {
-        $author = $comment->registered_name;
-      }
-      else {
-        $author = !empty($comment->name) ? $comment->name : variable_get('anonymous', 'Anonymous');
-      }
-      $quote = $comment->comment_body[LANGUAGE_NONE][0]['value'];
-    }
-    elseif ($nid && _quote_variable_get('node_link_display')) {
-      $node = node_load($nid);
+    if ($cid || _quote_variable_get('node_link_display')) {
+      extract(_quote_get_quoted_data($nid, $cid));
 
-      if (in_array($node->type, _quote_variable_get('node_types'))) {
-        // Certain text formats provide a sanitised "safe_value". Others do not.
-        $body = $node->body[$node->language][0];
-        $quote = isset($body['safe_value']) ? $body['safe_value'] : $body['value'];
-        $author = !empty($node->name) ? $node->name : variable_get('anonymous', 'Anonymous');
+      // Add quoted text and preserve existing content (signature etc.).
+      $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = "[quote=$name]" . trim($content) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
+
+      if (_quote_variable_get('subject_required')) {
+        $form['subject']['#required'] = TRUE;
       }
-      else {
-        return;
+
+      // The Form API, by default, drops name-value pairs from the form's action
+      // URL (besides ?q=). Manually adding it back in as a hidden element.
+      $form['quote'] = array(
+        '#type' => 'hidden',
+        '#value' => 1
+      );
+
+      if (_quote_variable_get('subject_required')) {
+        $form['subject']['#required'] = TRUE;
       }
     }
-    else {
-      return;
-    }
-
-    // Add quoted text and preserve existing content (signature etc.).
-    $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = "[quote=$author]" . trim($quote) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
-
-    if (_quote_variable_get('subject_required')) {
-      $form['subject']['#required'] = TRUE;
-    }
-
-    // The Form API, by default, drops name-value pairs from the form's action
-    // URL (besides ?q=). Manually adding it back in as a hidden element.
-    $form['quote'] = array(
-      '#type' => 'hidden',
-      '#value' => 1
-    );
   }
 }
 
@@ -292,6 +273,43 @@ function _quote_filter_process_callback($matches) {
   $quote_output = theme('quote', array('quote_content' => $quote_content, 'quote_author' => $quote_author));
 
   return $quote_output;
+}
+
+/**
+ * Retrieve the content to be quoted.
+ *
+ * @param $nid
+ *   The referring node's ID.
+ * @param $cid
+ *   The referring comment's ID (if applying).
+ *
+ * @return array
+ *   The referring object's data as:
+ *   - content: Node body or comment content
+ *   - name:    Display name of the object's author
+ */
+function _quote_get_quoted_data($nid, $cid = NULL) {
+  global $user;
+
+  $ret = array();
+
+  if ($cid) {
+    $quoted_comment = comment_load($cid);
+    $quoted_user_name = $quoted_comment->name != '' ? $quoted_comment->name : variable_get('anonymous', 'Anonymous');
+    $quoted_content = $quoted_comment->comment_body[LANGUAGE_NONE][0]['value'];
+  }
+  else {
+    $quoted_node = node_load($nid);
+    $quoted_user_name = $quoted_node->name != '' ? $quoted_node->name : variable_get('anonymous', 'Anonymous');
+
+    // Certain text formats provide a sanitised "safe_value". Others do not.
+    $quoted_content = $quoted_node->body[$quoted_node->language][0];
+    $quoted_content = isset($quoted_content['safe_value']) ? $quoted_content['safe_value'] : $quoted_content['value'];
+  }
+
+  $ret = array('content' => $quoted_content, 'name' => $quoted_user_name);
+
+  return $ret;
 }
 
 /**
