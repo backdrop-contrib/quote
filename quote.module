@@ -114,7 +114,7 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
       extract(_quote_get_quoted_data($nid, $cid));
 
       // Add quoted text and preserve existing content (signature etc.).
-      $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = "[quote=$name]" . trim($content) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
+      $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = "[quote=$author]" . trim($content) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
 
       // The Form API, by default, drops name-value pairs from the form's action
       // URL (besides ?q=). Manually adding it back in as a hidden element.
@@ -263,10 +263,10 @@ function _quote_filter_process($text) {
 
 /**
  * Generate and return the quote theming for a quote occurence found by
- * _quote_filter_process.
+ * _quote_filter_process().
  *
  * @param $matches
- *   The RegExp matches (for author and quote) found in _quote_filter_process.
+ *   The RegExp matches (for author and quote) found in _quote_filter_process().
  *
  * @return $output_quote
  *   Themed quote.
@@ -291,7 +291,7 @@ function _quote_filter_process_callback($matches) {
  * @return array
  *   The referring object's data as:
  *   - content: Node body or comment content
- *   - name:    Display name of the object's author
+ *   - author : Display name of the object's author
  */
 function _quote_get_quoted_data($nid, $cid = NULL) {
   global $user;
@@ -312,7 +312,7 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
     $quoted_content = isset($quoted_content['safe_value']) ? $quoted_content['safe_value'] : $quoted_content['value'];
   }
 
-  $ret = array('content' => $quoted_content, 'name' => $quoted_user_name);
+  $ret = array('content' => $quoted_content, 'author' => $quoted_user_name);
 
   return $ret;
 }
@@ -320,12 +320,12 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
 /**
  * Theme a quote with its content and author - default theme function.
  *
- * @param $quote_content
- *   The quote's string content.
- * @param $quote_author
- *   The quote author's name.
+ * @param $vars
+ *   An associative array with the following structure:
+ *   'quote_content' - The quote's string content.
+ *   'quote_author'  - The name of the author of the quote.
  *
- * @return $output_quote
+ * @return $quote_output
  *   Themed quote.
  */
 function theme_quote($vars) {
@@ -333,7 +333,7 @@ function theme_quote($vars) {
   $quote_author = $vars['quote_author'];
   $quote_output = '<blockquote class="quote-msg">';
   if ($quote_author != '') {
-    $quote_output .= '<div class="quote-author">' . t('%name wrote:', array('%name' => $quote_author)) . '</div>';
+    $quote_output .= '<div class="quote-author">' . t('%author wrote:', array('%author' => $quote_author)) . '</div>';
   }
   else {
     $quote_output .= '<div class="quote-author">' . t('Quote:') . '</div>';
