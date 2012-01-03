@@ -6,21 +6,6 @@
  */
 
 /**
- * Implements hook_help().
- */
-function quote_help($path, $arg) {
-  switch ($path) {
-    case 'admin/settings/quote':
-      return t('<p>The quote filter allows users to quote other posts in their
-comments. Besides the following settings, the quote filter will need to be
-enabled for each <a href="!input-format">input format</a> (as required). Please
-make sure that the quote filter is arranged <em>after</em> any HTML filters and
-<em>before</em> the line break filter. For more information, please visit the
-<a href="!project-page">project page</a>.</p>', array('!input-format' => url('admin/settings/filters'), '!project-page' => url('http://drupal.org/project/quote', array('absolute' => TRUE))));
-  }
-}
-
-/**
  * Menu callback: quote module settings form.
  */
 function quote_settings_form() {
