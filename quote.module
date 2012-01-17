@@ -313,10 +313,7 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
   else {
     $quoted_node = node_load($nid);
     $quoted_user_name = $quoted_node->name != '' ? $quoted_node->name : variable_get('anonymous', 'Anonymous');
-
-    // Certain text formats provide a sanitised "safe_value". Others do not.
-    $quoted_content = $quoted_node->body[$quoted_node->language][0];
-    $quoted_content = isset($quoted_content['safe_value']) ? $quoted_content['safe_value'] : $quoted_content['value'];
+    $quoted_content = $quoted_node->body[$quoted_node->language][0]['value'];
   }
 
   $ret = array('content' => $quoted_content, 'author' => $quoted_user_name);
