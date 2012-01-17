@@ -308,7 +308,7 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
   if ($cid) {
     $quoted_comment = comment_load($cid);
     $quoted_user_name = $quoted_comment->name != '' ? $quoted_comment->name : variable_get('anonymous', 'Anonymous');
-    $quoted_content = $quoted_comment->comment_body[LANGUAGE_NONE][0]['value'];
+    $quoted_content = $quoted_comment->comment_body[$quoted_comment->language][0]['value'];
   }
   else {
     $quoted_node = node_load($nid);
