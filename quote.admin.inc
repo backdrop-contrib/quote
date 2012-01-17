@@ -39,7 +39,9 @@ function quote_settings_form() {
   $form['quote']['format'] = array(
     '#type' => 'select',
     '#title' => t('Text format'),
-    '#description' => t('Select the text format that the quote should be filtered through prior to display in a text field. This is useful in situations where the raw quote might potentially contain sensitive content/code.'),
+    '#description' => t('Select the text format that the quote should be filtered through prior to display in a text field.
+    This is useful in situations where the raw quote might potentially contain sensitive content/code. It is recommended
+    that a dedicated format be used for this purpose containing the appropriate filters.'),
     '#options' => $options,
     '#default_value' => _quote_variable_get('format')
   );
