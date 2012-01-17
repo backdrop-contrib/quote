@@ -227,7 +227,8 @@ function _quote_variable_get($name = NULL) {
   if (empty($variables)) {
     $defaults = array(
       'node_types' => array('blog', 'story'),
-      'node_link_display' => 1
+      'node_link_display' => 1,
+      'format' => 0
     );
     $variables = variable_get('quote', array());
     $variables = array_merge($defaults, $variables);
@@ -307,13 +308,19 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
 
   if ($cid) {
     $quoted_comment = comment_load($cid);
+    $language = $quoted_comment->language;
     $quoted_user_name = $quoted_comment->name != '' ? $quoted_comment->name : variable_get('anonymous', 'Anonymous');
-    $quoted_content = $quoted_comment->comment_body[$quoted_comment->language][0]['value'];
+    $quoted_content = $quoted_comment->comment_body[$language][0]['value'];
   }
   else {
     $quoted_node = node_load($nid);
+    $language = $quoted_node->language;
     $quoted_user_name = $quoted_node->name != '' ? $quoted_node->name : variable_get('anonymous', 'Anonymous');
-    $quoted_content = $quoted_node->body[$quoted_node->language][0]['value'];
+    $quoted_content = $quoted_node->body[$language][0]['value'];
+  }
+
+  if (_quote_variable_get('format')) {
+    $quoted_content = check_markup($quoted_content, _quote_variable_get('format'), $language);
   }
 
   $ret = array('content' => $quoted_content, 'author' => $quoted_user_name);

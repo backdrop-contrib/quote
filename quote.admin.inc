@@ -25,8 +25,23 @@ function quote_settings_form() {
   $form['quote']['node_link_display'] = array(
     '#type' => 'checkbox',
     '#title' => t('Display the quote link for nodes'),
-    '#description' => t('Leave this option disabled if you use a PHP or similar filter in your nodes. The quote link is always displayed for comments.'),
+    '#description' => t('While the quote link is always displayed for comments, it can also be displayed for nodes.'),
     '#default_value' => _quote_variable_get('node_link_display')
+  );
+
+  // List all formats regardless of permission issues.
+  $formats = filter_formats();
+  $options = array('0' => t('None'));
+  foreach ($formats as $format) {
+    $options[$format->format] = $format->name;
+  }
+
+  $form['quote']['format'] = array(
+    '#type' => 'select',
+    '#title' => t('Text format'),
+    '#description' => t('Select the text format that the quote should be filtered through prior to display in a text field. This is useful in situations where the raw quote might potentially contain sensitive content/code.'),
+    '#options' => $options,
+    '#default_value' => _quote_variable_get('format')
   );
 
   return system_settings_form($form);
