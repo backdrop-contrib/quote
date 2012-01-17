@@ -112,9 +112,16 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
 
     if ($cid || _quote_variable_get('node_link_display')) {
       extract(_quote_get_quoted_data($nid, $cid));
+      $quote = "[quote=$author]" . trim($content) . "[/quote]\n";
 
-      // Add quoted text and preserve existing content (signature etc.).
-      $form['comment_body'][LANGUAGE_NONE][0]['#default_value'] = "[quote=$author]" . trim($content) . "[/quote]\n" . $form['comment_body'][LANGUAGE_NONE][0]['#default_value'];
+      $language = $form['comment_body']['#language'];
+      if (array_key_exists('#default_value', $form['comment_body'][$language][0])) {
+        // Add quoted text and preserve existing content (signature etc.).
+        $form['comment_body'][$language][0]['#default_value'] = $quote . $form['comment_body'][$language][0]['#default_value'];
+      }
+      else {
+        $form['comment_body'][$language][0]['value']['#default_value'] = $quote . $form['comment_body'][$language][0]['value']['#default_value'];
+      }
 
       // The Form API, by default, drops name-value pairs from the form's action
       // URL (besides ?q=). Manually adding it back in as a hidden element.
