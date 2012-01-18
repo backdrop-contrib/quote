@@ -359,13 +359,13 @@ function theme_quote($vars) {
 
   $quote_output = '<blockquote class="quote-msg quote-nest-' . $nest . '">';
   if ($quote_author != '') {
-    $quote_output .= '<div class="quote-author">' . t('%author wrote:', array('%author' => $quote_author)) . '</div>';
+    $quote_author = t('%author wrote:', array('%author' => $quote_author));
   }
   else {
-    $quote_output .= '<div class="quote-author">' . t('Quote:') . '</div>';
+    $quote_author = t('Quote:');
   }
-  $quote_output .= $quote_content;
-  $quote_output .= '</blockquote>';
+  $quote_author = '<div class="quote-author">' . $quote_author . '</div>';
+  $quote_output .= $quote_author . $quote_content . '</blockquote>';
 
   return $quote_output;
 }
