@@ -357,7 +357,8 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
 function theme_quote($vars) {
   extract($vars);
 
-  $quote_output = '<blockquote class="quote-msg quote-nest-' . $nest . '">';
+  $zebra = $nest & 1 ? 'odd' : 'even';
+  $quote_output = '<blockquote class="quote-msg quote-nest-' . $nest . ' ' . $zebra . '">';
   if ($quote_author != '') {
     $quote_author = t('%author wrote:', array('%author' => $quote_author));
   }
