@@ -46,6 +46,15 @@ function quote_settings_form() {
     '#default_value' => _quote_variable_get('format')
   );
 
+  $form['quote']['nest'] = array(
+    '#type' => 'select',
+    '#title' => t('Level of nesting'),
+    '#description' => t('Recursively nested quotes can lead to unsightly pages. This can be minimised by limiting the
+    order of nesting. 0 will display all levels. The default and recommended value is 2.'),
+    '#options' => range(0, 10),
+    '#default_value' => _quote_variable_get('nest')
+  );
+
   return system_settings_form($form);
 }
 

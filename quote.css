@@ -4,8 +4,12 @@
   font-weight: bold;
 }
 
-.quote-msg {
+.quote-msg, .quote-snip {
   padding: 1em;
   border: 1px solid #DDD;
   background-color: #F6F6F6;
+}
+
+.quote-snip {
+  text-align: center;
 }

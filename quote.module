@@ -46,7 +46,8 @@ function quote_theme() {
     'quote' => array(
       'variables' => array(
         'quote_content' => NULL,
-        'quote_author' => NULL
+        'quote_author' => NULL,
+        'nest' => 0
       )
     )
   );
@@ -56,7 +57,12 @@ function quote_theme() {
  * Implements hook_init().
  */
 function quote_init() {
-  drupal_add_css(drupal_get_path('module', 'quote') . '/quote.css');
+  $path = drupal_get_path('module', 'quote');
+
+  drupal_add_css($path . '/quote.css');
+
+  drupal_add_js(array('quote_nest' => _quote_variable_get('nest')), 'setting');
+  drupal_add_js($path . '/quote.js');
 }
 
 /**
@@ -228,7 +234,8 @@ function _quote_variable_get($name = NULL) {
     $defaults = array(
       'node_types' => array('blog', 'story'),
       'node_link_display' => 1,
-      'format' => 0
+      'format' => 0,
+      'nest' => 2
     );
     $variables = variable_get('quote', array());
     $variables = array_merge($defaults, $variables);
@@ -280,10 +287,18 @@ function _quote_filter_process($text) {
  *   Themed quote.
  */
 function _quote_filter_process_callback($matches) {
+  static $index = 0;
+
+  $nest = ++$index;
+
+  if (!stristr($matches[2], '[quote')) {
+    $index = 0;
+  }
+
   $quote_author = trim(drupal_substr($matches[1], 6));
   $quote_content = _quote_filter_process($matches[2]);
 
-  $quote_output = theme('quote', array('quote_content' => $quote_content, 'quote_author' => $quote_author));
+  $quote_output = theme('quote', array('quote_content' => $quote_content, 'quote_author' => $quote_author, 'nest' => $nest));
 
   return $quote_output;
 }
@@ -340,9 +355,9 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
  *   Themed quote.
  */
 function theme_quote($vars) {
-  $quote_content = $vars['quote_content'];
-  $quote_author = $vars['quote_author'];
-  $quote_output = '<blockquote class="quote-msg">';
+  extract($vars);
+
+  $quote_output = '<blockquote class="quote-msg quote-nest-' . $nest . '">';
   if ($quote_author != '') {
     $quote_output .= '<div class="quote-author">' . t('%author wrote:', array('%author' => $quote_author)) . '</div>';
   }
