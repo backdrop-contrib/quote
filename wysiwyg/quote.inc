@@ -1,8 +1,7 @@
 <?php
 /**
  * @file
- * Wysiwyg module's plugin file.
- *
+ *   Wysiwyg module's plugin file.
  */
 
 /**
