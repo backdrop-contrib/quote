@@ -16,7 +16,10 @@ function quote_quote_plugin() {
     'vendor url' => 'http://drupal.org/project/quote',
     'icon file' => 'quote.png',
     'icon title' => t('Add selected text between quote tags.'),
-    'settings' => array(),
+    'css path' => NULL,
+    'css file' => NULL,
+    'settings' => array()
   );
+
   return $plugins;
 }
