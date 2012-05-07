@@ -317,19 +317,16 @@ function _quote_filter_process_callback($matches) {
  *   - author : Display name of the object's author
  */
 function _quote_get_quoted_data($nid, $cid = NULL) {
-  global $user;
-
-  $ret = array();
-
   if ($cid) {
     $quoted_comment = comment_load($cid);
-    $language = $quoted_comment->language;
+    $language = field_language('comment', $quoted_comment, 'comment_body', $quoted_comment->language);
     $quoted_user_name = $quoted_comment->name != '' ? $quoted_comment->name : variable_get('anonymous', 'Anonymous');
     $quoted_content = $quoted_comment->comment_body[$language][0]['value'];
   }
   else {
     $quoted_node = node_load($nid);
     $language = $quoted_node->language;
+
     $quoted_user_name = $quoted_node->name != '' ? $quoted_node->name : variable_get('anonymous', 'Anonymous');
     $quoted_content = $quoted_node->body[$language][0]['value'];
   }
