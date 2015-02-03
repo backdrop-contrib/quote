@@ -320,14 +320,13 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
   if ($cid) {
     $quoted_comment = comment_load($cid);
     $language = field_language('comment', $quoted_comment, 'comment_body', $quoted_comment->language);
-    $quoted_user_name = $quoted_comment->name != '' ? $quoted_comment->name : variable_get('anonymous', 'Anonymous');
+    $quoted_user_name = check_plain(format_username(user_load($quoted_comment->uid)));
     $quoted_content = $quoted_comment->comment_body[$language][0]['value'];
   }
   else {
     $quoted_node = node_load($nid);
     $language = $quoted_node->language;
-
-    $quoted_user_name = $quoted_node->name != '' ? $quoted_node->name : variable_get('anonymous', 'Anonymous');
+    $quoted_user_name = check_plain(format_username(user_load($quoted_node->uid)));
     $quoted_content = $quoted_node->body[$language][0]['value'];
   }
 
