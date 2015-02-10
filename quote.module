@@ -325,7 +325,7 @@ function _quote_get_quoted_data($nid, $cid = NULL) {
   }
   else {
     $quoted_node = node_load($nid);
-    $language = $quoted_node->language;
+    $language = field_language('node', $quoted_node, 'body', $quoted_node->language);
     $quoted_user_name = check_plain(format_username(user_load($quoted_node->uid)));
     $quoted_content = $quoted_node->body[$language][0]['value'];
   }
