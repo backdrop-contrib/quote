@@ -356,10 +356,10 @@ function theme_quote($vars) {
   $zebra = $nest & 1 ? 'odd' : 'even';
   $quote_output = '<blockquote class="quote-msg quote-nest-' . $nest . ' ' . $zebra . '">';
   if ($quote_author != '') {
-    $quote_author = t('%author wrote:', array('%author' => $quote_author));
+    $quote_author = t('%author wrote: ', array('%author' => $quote_author));
   }
   else {
-    $quote_author = t('Quote:');
+    $quote_author = t('Quote: ');
   }
   $quote_author = '<div class="quote-author">' . $quote_author . '</div>';
   $quote_output .= $quote_author . $quote_content . '</blockquote>';
