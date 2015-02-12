@@ -270,7 +270,7 @@ function _quote_filter_process($text) {
     // Single regexp with callback allowing for theme calls and quote
     // nesting/recursion with regexp code from
     // http://de.php.net/manual/en/function.preg-replace-callback.php#85836
-    $text = preg_replace_callback('#\[(quote.*?)]((?>\[(?!/?quote[^[]*?])|[^[]|(?R))*)\[/quote]#is', '_quote_filter_process_callback', $text);
+    $text = preg_replace_callback('#\[(quote.*?)]((?>\[(?!/?quote[^[]*?])|[^[]+|(?R))*)\[/quote]#is', '_quote_filter_process_callback', $text);
   }
 
   return $text;
