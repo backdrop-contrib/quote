@@ -108,7 +108,7 @@ class QuoteTest extends DrupalWebTestCase {
   function testNodeQuote() {
     $this->addNode('quote', $this->sampleText1 . "\n\n" . '[quote=foo]' . $this->sampleText2 . '[/quote]');
     $this->assertText($this->sampleText1, 'Node content detected successfully.', 'Quote');
-    $this->assertText('foo wrote:' . $this->sampleText2, 'Quote detected successfully.', 'Quote');
+    $this->assertText('foo wrote: ' . $this->sampleText2, 'Quote detected successfully.', 'Quote');
   }
 
   /**
