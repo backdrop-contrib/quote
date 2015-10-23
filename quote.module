@@ -78,10 +78,13 @@ function quote_node_view($node, $view_mode) {
       'fragment' => 'comment-form'
     );
 
-    $node->content['links']['comment'] = array(
-      '#links' => $links,
-      '#attributes' => array('class' => array('links', 'inline'))
-    );
+    $node->content['links']['comment']['#links']['quote'] = $links['quote'];
+    if (empty($node->content['links']['comment']['#attributes']['class'])) {
+      $node->content['links']['comment']['#attributes']['class'] = array('links', 'inline');
+    }
+    else {
+      $node->content['links']['comment']['#attributes']['class'] += array('links', 'inline');
+    }
   }
 }
 
@@ -99,10 +102,14 @@ function quote_comment_view($comment) {
         'query' => array('quote' => 1),
         'fragment' => 'comment-form'
       );
-      $comment->content['links']['comment'] = array(
-        '#links' => $links,
-        '#attributes' => array('class' => array('links', 'inline'))
-      );
+
+      $comment->content['links']['comment']['#links']['quote'] = $links['quote'];
+      if (empty($comment->content['links']['comment']['#attributes']['class'])) {
+        $comment->content['links']['comment']['#attributes']['class'] = array('links', 'inline');
+      }
+      else {
+        $comment->content['links']['comment']['#attributes']['class'] += array('links', 'inline');
+      }
     }
   }
 }
