@@ -136,6 +136,10 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
         $form['comment_body'][$language][0]['value']['#default_value'] = $quote . $form['comment_body'][$language][0]['value']['#default_value'];
       }
 
+      // Set the text format to the format selected in the quote configuration
+      // page.
+      $form['comment_body'][$language][0]['#format'] = _quote_variable_get('format');
+
       // The Form API, by default, drops name-value pairs from the form's action
       // URL (besides ?q=). Manually adding it back in as a hidden element.
       $form['quote'] = array(
