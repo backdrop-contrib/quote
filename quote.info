@@ -1,9 +1,4 @@
 name = Quote
 description = Allows users to quote posts or comments.
 core = 7.x
-configure = admin/config/content/quote
-
 dependencies[] = comment
-
-files[] = views/quote_handler_field_comment_link_quote.inc
-files[] = tests/quote.test
