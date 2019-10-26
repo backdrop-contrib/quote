@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * The installation script for the quote module
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function quote_uninstall() {
+  variable_del('quote_modes_quote_sel');
+  variable_del('quote_modes_quote_all');
+  variable_del('quote_modes_quote_reply_all');
+  variable_del('quote_modes_quote_reply_sel');
+}
