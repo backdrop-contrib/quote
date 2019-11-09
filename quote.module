@@ -10,7 +10,7 @@
  * Implements hook_help().
  */
 function quote_help($path, $arg) {
-
+ return '';
 }
 
 /**
@@ -29,9 +29,10 @@ function quote_permission() {
  * Implements hook_node_view().
  */
 function quote_node_view($node, $view_mode) {
-/*  if (user_access('post comments') && in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_OPEN && _quote_variable_get('node_link_display')) {
-  }*/
-  if (user_access('post comments') && user_access('use quote')) {
+  if (user_access('post comments')
+&& user_access('use quote')
+&& in_array($node->type, array_filter(variable_get('quote_allow_types')))
+&& $node->comment == COMMENT_NODE_OPEN) {
     drupal_add_js(drupal_get_path('module', 'quote') . '/js/quote.js');
 
     if (variable_get('quote_modes_quote_sel', TRUE)) {
@@ -68,9 +69,13 @@ function quote_node_view($node, $view_mode) {
  * Implements hook_comment_view().
  */
 function quote_comment_view($comment) {
-/*   if (in_array($node->type, _quote_variable_get('node_types')) && $node->comment == COMMENT_NODE_OPEN) {
-  }*/
-  if (user_access('post comments') && user_access('use quote')) {
+  $node = node_load($comment->nid);
+
+  if (user_access('post comments')
+&& user_access('use quote')
+&& in_array($node->type, array_filter(variable_get('quote_allow_types')))
+&& ($node->comment == COMMENT_NODE_OPEN)
+&& variable_get('quote_allow_comments')) {
     drupal_add_js(drupal_get_path('module', 'quote') . '/js/quote.js');
 
     if (variable_get('quote_modes_quote_sel', TRUE)) {
@@ -94,7 +99,6 @@ function quote_comment_view($comment) {
     }
 
     if (variable_get('quote_modes_quote_reply_all', TRUE)) {
-      $node = node_load($comment->nid);
       $links['comment-quote-all-reply'] = [
         'title' => t('reply and quote all'),
         'href' => "comment/reply/$node->nid/$comment->cid",
@@ -147,6 +151,7 @@ function quote_menu() {
  */
 function _quote_settings_form() {
   $form = [];
+
   $form['modes'] = [
     '#type' => 'fieldset',
     '#title' => t('Select quote modes'),
@@ -171,6 +176,28 @@ function _quote_settings_form() {
     '#title' => t('Quote and reply selected'),
     '#default_value' => variable_get('quote_modes_quote_reply_sel', FALSE),
     '#disabled' => TRUE,
+  ];
+
+  $types = node_type_get_types();
+  $options = [];
+  foreach ($types as $type => $info) {
+    $options[$type] = check_plain(t($info->name));
+  }
+  $form['where'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Allow quotes in the:'),
+  ];
+  $form['where']['quote_allow_types'] = [
+    '#type' => 'checkboxes',
+    '#title' => t('Content types'),
+    '#options' => $options,
+    '#default_value' => variable_get('quote_allow_types'),
+  ];
+  $form['where']['quote_allow_comments'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Comments'),
+    '#description' => t('Checkbox works if node type allow quoting'),
+    '#default_value' => variable_get('quote_allow_comments', TRUE),
   ];
 
   return system_settings_form($form);

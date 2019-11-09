@@ -13,4 +13,6 @@ function quote_uninstall() {
   variable_del('quote_modes_quote_all');
   variable_del('quote_modes_quote_reply_all');
   variable_del('quote_modes_quote_reply_sel');
+  variable_del('quote_allow_comments');
+  variable_del('quote_allow_types');
 }
