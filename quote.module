@@ -34,6 +34,11 @@ function quote_node_view($node, $view_mode) {
 && in_array($node->type, array_filter(variable_get('quote_allow_types')))
 && $node->comment == COMMENT_NODE_OPEN) {
     drupal_add_js(drupal_get_path('module', 'quote') . '/js/quote.js');
+    drupal_add_js([
+      'quote' => [
+        'quote_selector' => variable_get('quote_selector', '#edit-comment-body textarea'),
+      ],
+    ], ['type' => 'setting']);
 
     if (variable_get('quote_modes_quote_sel', TRUE)) {
       $links['node-quote-sel'] = [
@@ -76,8 +81,6 @@ function quote_comment_view($comment) {
 && in_array($node->type, array_filter(variable_get('quote_allow_types')))
 && ($node->comment == COMMENT_NODE_OPEN)
 && variable_get('quote_allow_comments')) {
-    drupal_add_js(drupal_get_path('module', 'quote') . '/js/quote.js');
-
     if (variable_get('quote_modes_quote_sel', TRUE)) {
       $links['comment-quote-sel'] = [
         'title' => t('quote selected'),
@@ -181,7 +184,7 @@ function _quote_settings_form() {
   $types = node_type_get_types();
   $options = [];
   foreach ($types as $type => $info) {
-    $options[$type] = check_plain(t($info->name));
+    $options[$type] = $info->name;
   }
   $form['where'] = [
     '#type' => 'fieldset',
@@ -191,13 +194,24 @@ function _quote_settings_form() {
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
     '#options' => $options,
-    '#default_value' => variable_get('quote_allow_types'),
+    '#default_value' => variable_get('quote_allow_types', []),
   ];
   $form['where']['quote_allow_comments'] = [
     '#type' => 'checkbox',
     '#title' => t('Comments'),
     '#description' => t('Checkbox works if node type allow quoting'),
     '#default_value' => variable_get('quote_allow_comments', TRUE),
+  ];
+
+  $form['other'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Other settings'),
+  ];
+  $form['other']['quote_selector'] = [
+    '#type' => 'textfield',
+    '#title' => t('CSS selector to quote'),
+    '#description' => t('By default it is: #edit-comment-body textarea'),
+    '#default_value' => variable_get('quote_selector', '#edit-comment-body textarea'),
   ];
 
   return system_settings_form($form);
