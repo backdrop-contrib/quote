@@ -26,14 +26,13 @@ Drupal.behaviors.quote = {
     var nodeQuoteAll = $('.node-quote-all a');
     nodeQuoteAll.attr('href', '#');
 
-    var commentArea = $(Drupal.settings.quote.quote_selector);
-    var curValue = commentArea.val();
-
     commentQuoteSel.click(function(e) {
       e.preventDefault();
       var selected = getSelectedText();
 
       if (selected.length) {
+        var commentArea = $(Drupal.settings.quote.quote_selector);
+        var curValue = commentArea.val();
         var parent = $(this).closest('.comment');
         var username = parent.find('a.username').text();
         commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + selected + '</blockquote>');
@@ -44,6 +43,8 @@ Drupal.behaviors.quote = {
 
     commentQuoteAll.click(function(e) {
       e.preventDefault();
+      var commentArea = $(Drupal.settings.quote.quote_selector);
+      var curValue = commentArea.val();
       var parent = $(this).closest('.comment');
       var username = parent.find('a.username').text();
       var alltext = parent.find('.field-name-comment-body').text();
@@ -56,6 +57,8 @@ Drupal.behaviors.quote = {
       var selected = getSelectedText();
 
       if (selected.length) {
+        var commentArea = $(Drupal.settings.quote.quote_selector);
+        var curValue = commentArea.val();
         var parent = $(this).closest('.node');
         var username = parent.find('a.username').first().text();
         commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + selected + '</blockquote>');
@@ -66,6 +69,8 @@ Drupal.behaviors.quote = {
 
     nodeQuoteAll.click(function(e) {
       e.preventDefault();
+      var commentArea = $(Drupal.settings.quote.quote_selector);
+      var curValue = commentArea.val();
       var parent = $(this).closest('.node');
       var username = parent.find('a.username').first().text();
       var alltext = parent.find('.field-name-body').text();
