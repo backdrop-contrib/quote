@@ -15,4 +15,6 @@ function quote_uninstall() {
   variable_del('quote_modes_quote_reply_sel');
   variable_del('quote_allow_comments');
   variable_del('quote_allow_types');
+  variable_del('quote_selector');
+  variable_del('quote_limit');
 }

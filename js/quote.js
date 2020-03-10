@@ -3,30 +3,17 @@
 Drupal.behaviors.quote = {
   attach: function(context, settings) {
 
+    var quoteLimit = Drupal.settings.quote.quote_limit;
+
     function getSelectedText() {
       if (document.getSelection) {
-        return document.getSelection().toString();
+        return document.getSelection().toString().substring(0, quoteLimit);
       }
-      else if (window.getSelection) {
-        return window.getSelection().toString();
-      }
-      else if (document.selection) {
-        return document.selection.createRange().text;
-      }
+
       return '';
     }
 
-    // TODO: refactor this
-    var commentQuoteSel = $('.comment-quote-sel a');
-    commentQuoteSel.attr('href', '#');
-    var commentQuoteAll = $('.comment-quote-all a');
-    commentQuoteAll.attr('href', '#');
-    var nodeQuoteSel = $('.node-quote-sel a');
-    nodeQuoteSel.attr('href', '#');
-    var nodeQuoteAll = $('.node-quote-all a');
-    nodeQuoteAll.attr('href', '#');
-
-    commentQuoteSel.click(function(e) {
+    $('.comment-quote-sel a').click(function(e) {
       e.preventDefault();
       var selected = getSelectedText();
 
@@ -38,21 +25,20 @@ Drupal.behaviors.quote = {
         commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + selected + '</blockquote>');
         commentArea.focus();
       }
-
     });
 
-    commentQuoteAll.click(function(e) {
+    $('.comment-quote-all a').click(function(e) {
       e.preventDefault();
       var commentArea = $(Drupal.settings.quote.quote_selector);
       var curValue = commentArea.val();
       var parent = $(this).closest('.comment');
       var username = parent.find('a.username').text();
-      var alltext = parent.find('.field-name-comment-body').text();
+      var alltext = parent.find('.field-name-comment-body').text().substring(0, quoteLimit);
       commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + alltext + '</blockquote>');
       commentArea.focus();
     });
 
-    nodeQuoteSel.click(function(e) {
+    $('.node-quote-sel a').click(function(e) {
       e.preventDefault();
       var selected = getSelectedText();
 
@@ -64,20 +50,18 @@ Drupal.behaviors.quote = {
         commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + selected + '</blockquote>');
         commentArea.focus();
       }
-
     });
 
-    nodeQuoteAll.click(function(e) {
+    $('.node-quote-all a').click(function(e) {
       e.preventDefault();
       var commentArea = $(Drupal.settings.quote.quote_selector);
       var curValue = commentArea.val();
       var parent = $(this).closest('.node');
       var username = parent.find('a.username').first().text();
-      var alltext = parent.find('.field-name-body').text();
+      var alltext = parent.find('.field-name-body').text().substring(0, quoteLimit);
       commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + alltext + '</blockquote>');
       commentArea.focus();
     });
-
   }
 };
 
