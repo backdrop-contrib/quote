@@ -130,8 +130,11 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     $comment = comment_load($_GET['comment-quote-all-reply']);
     $user = user_load($comment->uid);
     $language = $form['comment_body']['#language'];
+    $limit = variable_get('quote_limit', 400);
+    $comment_limit = substr($comment->comment_body['und'][0]['value'], 0, $limit);
+
     $form['comment_body'][$language][0]['#default_value'] =
-      '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $comment->comment_body['und'][0]['value'] . '</blockquote>';
+      '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $comment_limit . '</blockquote>';
   }
 }
 
