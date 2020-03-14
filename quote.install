@@ -17,4 +17,6 @@ function quote_uninstall() {
   variable_del('quote_allow_types');
   variable_del('quote_selector');
   variable_del('quote_limit');
+  variable_del('quote_selector_comment_quote_all');
+  variable_del('quote_selector_node_quote_all');
 }

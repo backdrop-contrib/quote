@@ -33,7 +33,7 @@ Drupal.behaviors.quote = {
       var curValue = commentArea.val();
       var parent = $(this).closest('.comment');
       var username = parent.find('a.username').text();
-      var alltext = parent.find('.field-name-comment-body').text().substring(0, quoteLimit);
+      var alltext = parent.find(Drupal.settings.quote.quote_selector_comment_quote_all).text().substring(0, quoteLimit);
       commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + alltext + '</blockquote>');
       commentArea.focus();
     });
@@ -58,7 +58,7 @@ Drupal.behaviors.quote = {
       var curValue = commentArea.val();
       var parent = $(this).closest('.node');
       var username = parent.find('a.username').first().text();
-      var alltext = parent.find('.field-name-body').text().substring(0, quoteLimit);
+      var alltext = parent.find(Drupal.settings.quote.quote_selector_node_quote_all).text().substring(0, quoteLimit);
       commentArea.val(curValue + '<blockquote><strong>' + username + ' wrote:</strong> ' + alltext + '</blockquote>');
       commentArea.focus();
     });
