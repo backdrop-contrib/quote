@@ -2,15 +2,14 @@
 
 /**
  * @file
- * The quote module provides a filter and appropriate links that allow users to
- * quote nodes and other comments in their own comments.
+ * Allows users to quote posts or comments.
  */
 
 /**
  * Implements hook_help().
  */
 function quote_help($path, $arg) {
- return '';
+  return '';
 }
 
 /**
@@ -19,10 +18,12 @@ function quote_help($path, $arg) {
 function quote_permission() {
   return [
     'administer quote' => [
-      'title' => t('Administer Quote module')],
+      'title' => t('Administer Quote module'),
+    ],
     'use quote' => [
-      'title' => t('Use Quote module')],
-    ];
+      'title' => t('Use Quote module'),
+    ],
+  ];
 }
 
 /**
@@ -30,9 +31,9 @@ function quote_permission() {
  */
 function quote_node_view($node, $view_mode) {
   if (user_access('post comments')
-&& user_access('use quote')
-&& in_array($node->type, array_filter(variable_get('quote_allow_types')))
-&& $node->comment == COMMENT_NODE_OPEN) {
+  && user_access('use quote')
+  && in_array($node->type, array_filter(variable_get('quote_allow_types')))
+  && $node->comment == COMMENT_NODE_OPEN) {
     drupal_add_js(drupal_get_path('module', 'quote') . '/js/quote.js');
     drupal_add_js([
       'quote' => [
@@ -48,7 +49,7 @@ function quote_node_view($node, $view_mode) {
         'title' => t('quote selected'),
         'href' => '#',
         'query' => '',
-        'fragment' => ''
+        'fragment' => '',
       ];
       $node->content['links']['comment']['#links']['node-quote-sel'] = $links['node-quote-sel'];
     }
@@ -58,16 +59,16 @@ function quote_node_view($node, $view_mode) {
         'title' => t('quote all'),
         'href' => '#',
         'query' => '',
-        'fragment' => ''
+        'fragment' => '',
       ];
       $node->content['links']['comment']['#links']['node-quote-all'] = $links['node-quote-all'];
     }
 
     /*$links['node-quote-all-reply'] = [
-      'title' => t('reply and quote all'),
-      'href' => "comment/reply/$node->nid/",
-      'query' => ['node-quote-all-reply-nid' => $node->nid],
-      'fragment' => ''
+    'title' => t('reply and quote all'),
+    'href' => "comment/reply/$node->nid/",
+    'query' => ['node-quote-all-reply-nid' => $node->nid],
+    'fragment' => ''
     ];
     $node->content['links']['comment']['#links']['node-quote-all-reply'] = $links['node-quote-all-reply'];*/
   }
@@ -80,16 +81,16 @@ function quote_comment_view($comment) {
   $node = node_load($comment->nid);
 
   if (user_access('post comments')
-&& user_access('use quote')
-&& in_array($node->type, array_filter(variable_get('quote_allow_types')))
-&& ($node->comment == COMMENT_NODE_OPEN)
-&& variable_get('quote_allow_comments')) {
+  && user_access('use quote')
+  && in_array($node->type, array_filter(variable_get('quote_allow_types')))
+  && ($node->comment == COMMENT_NODE_OPEN)
+  && variable_get('quote_allow_comments')) {
     if (variable_get('quote_modes_quote_sel', TRUE)) {
       $links['comment-quote-sel'] = [
         'title' => t('quote selected'),
         'href' => '#',
         'query' => '',
-        'fragment' => ''
+        'fragment' => '',
       ];
       $comment->content['links']['comment']['#links']['comment-quote-sel'] = $links['comment-quote-sel'];
     }
@@ -99,7 +100,7 @@ function quote_comment_view($comment) {
         'title' => t('quote all'),
         'href' => '#',
         'query' => '',
-        'fragment' => ''
+        'fragment' => '',
       ];
       $comment->content['links']['comment']['#links']['comment-quote-all'] = $links['comment-quote-all'];
     }
@@ -109,7 +110,7 @@ function quote_comment_view($comment) {
         'title' => t('reply and quote all'),
         'href' => "comment/reply/$node->nid/$comment->cid",
         'query' => ['comment-quote-all-reply' => $comment->cid],
-        'fragment' => ''
+        'fragment' => '',
       ];
       $comment->content['links']['comment']['#links']['comment-quote-all-reply'] = $links['comment-quote-all-reply'];
     }
@@ -120,12 +121,14 @@ function quote_comment_view($comment) {
  * Implements hook_form_alter().
  */
 function quote_form_alter(&$form, &$form_state, $form_id) {
-  /*if ($form['#id'] == 'comment-form' && isset($_GET['node-quote-all-reply-nid'])) {
-    $node = node_load($_GET['node-quote-all-reply-nid']);
-    $user = user_load($node->uid);
-    $language = $form['comment_body']['#language'];
-    $form['comment_body'][$language][0]['#default_value'] =
-      '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $node->body['und'][0]['value'] . '</blockquote>';
+  /*if ($form['#id'] == 'comment-form' &&
+  isset($_GET['node-quote-all-reply-nid'])) {
+  $node = node_load($_GET['node-quote-all-reply-nid']);
+  $user = user_load($node->uid);
+  $language = $form['comment_body']['#language'];
+  $form['comment_body'][$language][0]['#default_value'] =
+  '<blockquote><strong>' . $user->name . ' wrote:</strong> ' .
+  $node->body['und'][0]['value'] . '</blockquote>';
   }*/
 
   if ($form['#id'] == 'comment-form' && isset($_GET['comment-quote-all-reply'])) {
@@ -133,7 +136,7 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     $user = user_load($comment->uid);
     $language = $form['comment_body']['#language'];
     $limit = variable_get('quote_limit', 400);
-    $comment_limit = substr($comment->comment_body['und'][0]['value'], 0, $limit);
+    $comment_limit = substr($comment->comment_body[LANGUAGE_NONE][0]['value'], 0, $limit);
 
     $form['comment_body'][$language][0]['#default_value'] =
       '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $comment_limit . '</blockquote>';
