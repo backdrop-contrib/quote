@@ -1,6 +1,8 @@
 (function ($) {
 
-Drupal.behaviors.quote = {
+  'use strict';
+
+  Drupal.behaviors.quote = {
   attach: function(context, settings) {
 
     var quoteLimit = Drupal.settings.quote.quote_limit;
