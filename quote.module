@@ -85,6 +85,16 @@ function quote_comment_view($comment) {
   && in_array($node->type, array_filter(variable_get('quote_allow_types')))
   && ($node->comment == COMMENT_NODE_OPEN)
   && variable_get('quote_allow_comments')) {
+    drupal_add_js(drupal_get_path('module', 'quote') . '/js/quote.js');
+    drupal_add_js([
+      'quote' => [
+        'quote_selector' => variable_get('quote_selector', '#edit-comment-body textarea'),
+        'quote_limit' => variable_get('quote_limit', '400'),
+        'quote_selector_comment_quote_all' => variable_get('quote_selector_comment_quote_all', '.field-name-comment-body'),
+        'quote_selector_node_quote_all' => variable_get('quote_selector_node_quote_all', '.field-name-body'),
+      ],
+    ], ['type' => 'setting']);
+
     if (variable_get('quote_modes_quote_sel', TRUE)) {
       $links['comment-quote-sel'] = [
         'title' => t('quote selected'),
