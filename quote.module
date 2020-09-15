@@ -41,6 +41,7 @@ function quote_node_view($node, $view_mode) {
         'quote_limit' => variable_get('quote_limit', '400'),
         'quote_selector_comment_quote_all' => variable_get('quote_selector_comment_quote_all', '.field-name-comment-body'),
         'quote_selector_node_quote_all' => variable_get('quote_selector_node_quote_all', '.field-name-body'),
+        'quote_ckeditor_support' => variable_get('quote_ckeditor_support', 'FALSE'),
       ],
     ], ['type' => 'setting']);
 
@@ -92,6 +93,7 @@ function quote_comment_view($comment) {
         'quote_limit' => variable_get('quote_limit', '400'),
         'quote_selector_comment_quote_all' => variable_get('quote_selector_comment_quote_all', '.field-name-comment-body'),
         'quote_selector_node_quote_all' => variable_get('quote_selector_node_quote_all', '.field-name-body'),
+        'quote_ckeditor_support' => variable_get('quote_ckeditor_support', 'FALSE'),
       ],
     ], ['type' => 'setting']);
 
@@ -220,6 +222,18 @@ function _quote_settings_form() {
     '#title' => t('Comments'),
     '#description' => t('Checkbox works if node type allow quoting'),
     '#default_value' => variable_get('quote_allow_comments', TRUE),
+  ];
+
+  $form['ckeditor_support_set'] = [
+    '#type' => 'fieldset',
+    '#title' => t('CKEditor support'),
+  ];
+  $form['ckeditor_support_set']['quote_ckeditor_support'] = [
+    '#type' => 'checkbox',
+    '#title' => t('CKEditor support'),
+    '#description' => t('If checkbox checked and CKEditor found on the page, CKEditor will have a priority'),
+    '#default_value' => variable_get('quote_ckeditor_support', FALSE),
+    '#disabled' => !module_exists('ckeditor'),
   ];
 
   $form['other'] = [
