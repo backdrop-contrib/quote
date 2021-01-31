@@ -52,7 +52,7 @@
           let curValue = getCommentAreaCurValue(commentArea);
           let parent = $(this).closest('.comment');
           let username = parent.find('a.username').text();
-          let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote>';
+          let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote><p><br/></p>';
           setCommentAreaValue(commentArea, value);
           commentArea.focus();
         }
@@ -66,7 +66,7 @@
         let parent = $(this).closest('.comment');
         let username = parent.find('a.username').text();
         let alltext = parent.find(Drupal.settings.quote.quote_selector_comment_quote_all).text().substring(0, quoteLimit);
-        let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote>';
+        let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote><p><br/></p>';
         setCommentAreaValue(commentArea, value);
         commentArea.focus();
       });
@@ -79,7 +79,7 @@
           let curValue = getCommentAreaCurValue(commentArea);
           let parent = $(this).closest('.node');
           let username = parent.find('a.username').first().text();
-          let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote>';
+          let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote><p><br/></p>';
           setCommentAreaValue(commentArea, value);
           commentArea.focus();
         }
@@ -92,7 +92,7 @@
         let parent = $(this).closest('.node');
         let username = parent.find('a.username').first().text();
         let alltext = parent.find(Drupal.settings.quote.quote_selector_node_quote_all).text().substring(0, quoteLimit);
-        let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote>';
+        let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote><p><br/></p>';
         setCommentAreaValue(commentArea, value);
         commentArea.focus();
       });

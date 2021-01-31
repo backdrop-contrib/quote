@@ -151,7 +151,7 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     $comment_limit = substr($comment->comment_body[LANGUAGE_NONE][0]['value'], 0, $limit);
 
     $form['comment_body'][$language][0]['#default_value'] =
-      '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $comment_limit . '</blockquote>';
+      '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $comment_limit . '</blockquote><p><br/></p>';
   }
 }
 
