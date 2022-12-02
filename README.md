@@ -49,7 +49,7 @@ While the module correctly detects the commenters names thanks to the <code>a.us
 ## Credits
 
 - Ported to Backdrop CMS by [Alan Mels](https://github.com/alanmels).
-- Originally written for Drupal by [Andrei Ivnitskii](https://www.drupal.org/u/ivnish).
+- Originally written for Drupal by [Andrei Ivnitskii](https://github.com/ivnish).
 - Sponsored by [AltaGrade](https://www.altagrade.com)
 
 ## License
