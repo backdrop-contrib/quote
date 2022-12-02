@@ -7,9 +7,7 @@
     "quote_allow_types": {
         "post": "post",
         "card": 0,
-        "page": 0,
-        "service": 0,
-        "ticket": 0
+        "page": 0
     },
     "quote_allow_comments": 1,
     "quote_ckeditor_support": 0,
