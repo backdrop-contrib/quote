@@ -9,14 +9,53 @@
  * Implements hook_uninstall().
  */
 function quote_uninstall() {
-  variable_del('quote_modes_quote_sel');
-  variable_del('quote_modes_quote_all');
-  variable_del('quote_modes_quote_reply_all');
-  variable_del('quote_modes_quote_reply_sel');
-  variable_del('quote_allow_comments');
-  variable_del('quote_allow_types');
-  variable_del('quote_selector');
-  variable_del('quote_limit');
-  variable_del('quote_selector_comment_quote_all');
-  variable_del('quote_selector_node_quote_all');
+  config_clear('quote.settings', 'quote_modes_quote_sel');
+  config_clear('quote.settings', 'quote_modes_quote_all');
+  config_clear('quote.settings', 'quote_modes_quote_reply_all');
+  config_clear('quote.settings', 'quote_modes_quote_reply_sel');
+  config_clear('quote.settings', 'quote_allow_comments');
+  config_clear('quote.settings', 'quote_allow_types');
+  config_clear('quote.settings', 'quote_selector');
+  config_clear('quote.settings', 'quote_limit');
+  config_clear('quote.settings', 'quote_selector_comment_quote_all');
+  config_clear('quote.settings', 'quote_selector_node_quote_all');
+}
+
+/**
+ * Migrate quote variables to config.
+ */
+function quote_update_1000() {
+  $config = config('quote.settings');
+  $config->set('quote_allow_types', update_variable_get('quote_allow_types', 'dynamic value in file /quote/quote.module line 218'));
+  $config->set('quote_selector', update_variable_get('quote_selector', '#edit-comment-body textarea'));
+  $config->set('quote_limit', update_variable_get('quote_limit', '400'));
+  $config->set('quote_selector_comment_quote_all', update_variable_get('quote_selector_comment_quote_all', '.field-name-comment-body'));
+  $config->set('quote_selector_node_quote_all', update_variable_get('quote_selector_node_quote_all', '.field-name-body'));
+  $config->set('quote_ckeditor_support', update_variable_get('quote_ckeditor_support', array()));
+  $config->set('quote_modes_quote_sel', update_variable_get('quote_modes_quote_sel', TRUE));
+  $config->set('quote_modes_quote_all', update_variable_get('quote_modes_quote_all', TRUE));
+  $config->set('quote_allow_comments', update_variable_get('quote_allow_comments', TRUE));
+  $config->set('quote_modes_quote_reply_all', update_variable_get('quote_modes_quote_reply_all', TRUE));
+  $config->set('quote_modes_quote_reply_sel', update_variable_get('quote_modes_quote_reply_sel', array()));
+  $config->save();
+
+  update_variable_del('quote_allow_types');
+  update_variable_del('quote_selector');
+  update_variable_del('quote_limit');
+  update_variable_del('quote_selector_comment_quote_all');
+  update_variable_del('quote_selector_node_quote_all');
+  update_variable_del('quote_ckeditor_support');
+  update_variable_del('quote_modes_quote_sel');
+  update_variable_del('quote_modes_quote_all');
+  update_variable_del('quote_allow_comments');
+  update_variable_del('quote_modes_quote_reply_all');
+  update_variable_del('quote_modes_quote_reply_sel');
+}
+
+/**
+ * Implements hook_install().
+ */
+function quote_install() {
+  // Dynamically generated variable data was detected.
+  // /quote/quote.module line 218
 }

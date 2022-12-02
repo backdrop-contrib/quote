@@ -1,5 +1,6 @@
 name = Quote
 description = Allows users to quote posts or comments.
-core = 7.x
+backdrop = 1.x
+type = module
 dependencies[] = comment
 configure = admin/config/content/quote

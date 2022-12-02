@@ -2,11 +2,11 @@
 
   'use strict';
 
-  Drupal.behaviors.quote = {
+  Backdrop.behaviors.quote = {
     attach: function (context, settings) {
 
-      let quoteLimit = Drupal.settings.quote.quote_limit;
-      let quoteCkeditor = Drupal.settings.quote.quote_ckeditor_support;
+      let quoteLimit = Backdrop.settings.quote.quote_limit;
+      let quoteCkeditor = Backdrop.settings.quote.quote_ckeditor_support;
 
       function getSelectedText() {
         if (document.getSelection) {
@@ -17,7 +17,7 @@
       }
 
       function getCommentArea() {
-        let commentArea = $(Drupal.settings.quote.quote_selector);
+        let commentArea = $(Backdrop.settings.quote.quote_selector);
 
         if (quoteCkeditor && $('.cke_wysiwyg_frame').length) {
           commentArea = $('.cke_wysiwyg_frame').contents().find('body');
@@ -52,7 +52,7 @@
           let curValue = getCommentAreaCurValue(commentArea);
           let parent = $(this).closest('.comment');
           let username = parent.find('a.username').text();
-          let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote><p><br/></p>';
+          let value = curValue + '<blockquote><strong>' + Backdrop.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote><p><br/></p>';
           setCommentAreaValue(commentArea, value);
           commentArea.focus();
         }
@@ -65,8 +65,8 @@
         let curValue = getCommentAreaCurValue(commentArea);
         let parent = $(this).closest('.comment');
         let username = parent.find('a.username').text();
-        let alltext = parent.find(Drupal.settings.quote.quote_selector_comment_quote_all).text().substring(0, quoteLimit);
-        let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote><p><br/></p>';
+        let alltext = parent.find(Backdrop.settings.quote.quote_selector_comment_quote_all).text().substring(0, quoteLimit);
+        let value = curValue + '<blockquote><strong>' + Backdrop.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote>';
         setCommentAreaValue(commentArea, value);
         commentArea.focus();
       });
@@ -79,7 +79,7 @@
           let curValue = getCommentAreaCurValue(commentArea);
           let parent = $(this).closest('.node');
           let username = parent.find('a.username').first().text();
-          let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote><p><br/></p>';
+          let value = curValue + '<blockquote><strong>' + Backdrop.t('@author wrote:', {'@author': username}) + '</strong> ' + selected + '</blockquote>';
           setCommentAreaValue(commentArea, value);
           commentArea.focus();
         }
@@ -91,11 +91,12 @@
         let curValue = getCommentAreaCurValue(commentArea);
         let parent = $(this).closest('.node');
         let username = parent.find('a.username').first().text();
-        let alltext = parent.find(Drupal.settings.quote.quote_selector_node_quote_all).text().substring(0, quoteLimit);
-        let value = curValue + '<blockquote><strong>' + Drupal.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote><p><br/></p>';
+        let alltext = parent.find(Backdrop.settings.quote.quote_selector_node_quote_all).text().substring(0, quoteLimit);
+        let value = curValue + '<blockquote><strong>' + Backdrop.t('@author wrote:', {'@author': username}) + '</strong> ' + alltext + '</blockquote>';
         setCommentAreaValue(commentArea, value);
         commentArea.focus();
       });
+
     }
   };
 

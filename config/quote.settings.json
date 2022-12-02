@@ -1,0 +1,18 @@
+{
+    "_config_name": "quote.settings",
+    "quote_allow_types": {
+        "post": "post",
+        "card": 0,
+        "page": 0,
+    },
+    "quote_selector": "#edit-comment-body textarea",
+    "quote_limit": "400",
+    "quote_selector_comment_quote_all": ".field-name-comment-body",
+    "quote_selector_node_quote_all": ".field-name-field-body",
+    "quote_ckeditor_support": 0,
+    "quote_modes_quote_sel": 1,
+    "quote_modes_quote_all": 1,
+    "quote_allow_comments": 1,
+    "quote_modes_quote_reply_all": 1,
+    "quote_modes_quote_reply_sel": false
+}
