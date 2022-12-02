@@ -9,16 +9,7 @@
  * Implements hook_uninstall().
  */
 function quote_uninstall() {
-  config_clear('quote.settings', 'quote_modes_quote_sel');
-  config_clear('quote.settings', 'quote_modes_quote_all');
-  config_clear('quote.settings', 'quote_modes_quote_reply_all');
-  config_clear('quote.settings', 'quote_modes_quote_reply_sel');
-  config_clear('quote.settings', 'quote_allow_comments');
-  config_clear('quote.settings', 'quote_allow_types');
-  config_clear('quote.settings', 'quote_selector');
-  config_clear('quote.settings', 'quote_limit');
-  config_clear('quote.settings', 'quote_selector_comment_quote_all');
-  config_clear('quote.settings', 'quote_selector_node_quote_all');
+  config('quote.settings')->delete();
 }
 
 /**
@@ -26,7 +17,7 @@ function quote_uninstall() {
  */
 function quote_update_1000() {
   $config = config('quote.settings');
-  $config->set('quote_allow_types', update_variable_get('quote_allow_types', 'dynamic value in file /quote/quote.module line 218'));
+  $config->set('quote_allow_types', update_variable_get('quote_allow_types', ['post']));
   $config->set('quote_selector', update_variable_get('quote_selector', '#edit-comment-body textarea'));
   $config->set('quote_limit', update_variable_get('quote_limit', '400'));
   $config->set('quote_selector_comment_quote_all', update_variable_get('quote_selector_comment_quote_all', '.field-name-comment-body'));
@@ -56,6 +47,4 @@ function quote_update_1000() {
  * Implements hook_install().
  */
 function quote_install() {
-  // Dynamically generated variable data was detected.
-  // /quote/quote.module line 218
 }
