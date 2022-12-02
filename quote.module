@@ -39,7 +39,12 @@ function quote_node_view($node, $view_mode) {
    && user_access('use quote')
    && in_array($node->type, array_filter($config->get('quote_allow_types')))
    && $node->comment == COMMENT_NODE_OPEN) {
-    backdrop_add_js(backdrop_get_path('module', 'quote') . '/js/quote.js');
+    if (module_exists('markdown')) {
+      backdrop_add_js(backdrop_get_path('module', 'quote') . '/js/markdown-quote.js');
+    }
+    else {
+      backdrop_add_js(backdrop_get_path('module', 'quote') . '/js/quote.js');
+    }
     backdrop_add_js([
       'quote' => [
         'quote_selector' => $config->get('quote_selector'),
@@ -69,20 +74,13 @@ function quote_node_view($node, $view_mode) {
       ];
       $node->content['links']['comment']['#links']['node-quote-all'] = $links['node-quote-all'];
     }
-
-    /*$links['node-quote-all-reply'] = [
-     'title' => t('reply and quote all'),
-     'href' => "comment/reply/$node->nid/",
-     'query' => ['node-quote-all-reply-nid' => $node->nid],
-     'fragment' => ''
-     ];
-     $node->content['links']['comment']['#links']['node-quote-all-reply'] = $links['node-quote-all-reply'];*/
   }
 }
 
 /**
  * Implements hook_comment_view().
  */
+
 function quote_comment_view($comment) {
   $config = config('quote.settings');
   $node = node_load($comment->nid);
@@ -92,17 +90,23 @@ function quote_comment_view($comment) {
    && in_array($node->type, array_filter($config->get('quote_allow_types')))
    && ($node->comment == COMMENT_NODE_OPEN)
    && $config->get('quote_allow_comments')) {
-    backdrop_add_js(backdrop_get_path('module', 'quote') . '/js/quote.js');
-    backdrop_add_js([
-      'quote' => [
-        'quote_selector' => $config->get('quote_selector'),
-        'quote_limit' => $config->get('quote_limit'),
-        'quote_selector_comment_quote_all' => $config->get('quote_selector_comment_quote_all'),
-        'quote_selector_node_quote_all' => $config->get('quote_selector_node_quote_all'),
-        'quote_ckeditor_support' => $config->get('quote_ckeditor_support'),
-      ],
-    ], ['type' => 'setting']);
-
+    if (arg(0) == 'comment') { // otherwise the .js file is already loaded.
+      if (module_exists('markdown')) {
+        backdrop_add_js(backdrop_get_path('module', 'quote') . '/js/markdown-quote.js');
+      }
+      else {
+        backdrop_add_js(backdrop_get_path('module', 'quote') . '/js/quote.js');
+      }
+      backdrop_add_js([
+        'quote' => [
+          'quote_selector' => $config->get('quote_selector'),
+          'quote_limit' => $config->get('quote_limit'),
+          'quote_selector_comment_quote_all' => $config->get('quote_selector_comment_quote_all'),
+          'quote_selector_node_quote_all' => $config->get('quote_selector_node_quote_all'),
+          'quote_ckeditor_support' => $config->get('quote_ckeditor_support'),
+        ],
+      ], ['type' => 'setting']);
+    }
     if ($config->get('quote_modes_quote_sel')) {
       $links['comment-quote-sel'] = [
         'title' => t('quote selected'),
@@ -135,19 +139,11 @@ function quote_comment_view($comment) {
   }
 }
 
+
 /**
  * Implements hook_form_alter().
  */
 function quote_form_alter(&$form, &$form_state, $form_id) {
-  /*if ($form['#id'] == 'comment-form' &&
-   isset($_GET['node-quote-all-reply-nid'])) {
-   $node = node_load($_GET['node-quote-all-reply-nid']);
-   $user = user_load($node->uid);
-   $language = $form['comment_body']['#language'];
-   $form['comment_body'][$language][0]['#default_value'] =
-   '<blockquote><strong>' . $user->name . ' wrote:</strong> ' .
-   $node->body['und'][0]['value'] . '</blockquote>';
-   }*/
 
   if ($form['#id'] == 'comment-form' && isset($_GET['comment-quote-all-reply'])) {
     $comment = comment_load($_GET['comment-quote-all-reply']);
@@ -155,9 +151,14 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     $language = $form['comment_body']['#language'];
     $limit = config_get('quote.settings', 'quote_limit');
     $comment_limit = substr($comment->comment_body[LANGUAGE_NONE][0]['value'], 0, $limit);
-
-    $form['comment_body'][$language][0]['#default_value'] =
-      '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $comment_limit . '</blockquote><p><br/></p>';
+    if (module_exists('markdown')) {
+      $form['comment_body'][$language][0]['#default_value'] =
+        '> **' . $user->name . ' wrote:** ' . $comment_limit  . '\n\n';
+    }
+    else {
+      $form['comment_body'][$language][0]['#default_value'] =
+        '<blockquote><strong>' . $user->name . ' wrote:</strong> ' . $comment_limit . '</blockquote>';
+    }
   }
 }
 
@@ -298,110 +299,3 @@ function quote_config_submit($form, &$form_state) {
   $config->save();
   backdrop_set_message(t('The configuration options have been saved.'));
 }
-
-/**
- * Form settings.
- */
-/*
-function _quote_settings_form() {
-  $config = config('quote.settings');
-  $form['#config'] = 'quote.settings';
-  $form = [];
-
-
-  $form['modes'] = [
-    '#type' => 'fieldset',
-    '#title' => t('Select quote modes'),
-  ];
-  $form['modes']['quote_modes_quote_sel'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Quote selected'),
-    '#default_value' => $config->get('quote_modes_quote_sel'),
-  ];
-  $form['modes']['quote_modes_quote_all'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Quote all'),
-    '#default_value' => $config->get('quote_modes_quote_all'),
-  ];
-  $form['modes']['quote_modes_quote_reply_all'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Quote and reply all'),
-    '#default_value' => $config->get('quote_modes_quote_reply_all'),
-  ];
-  $form['modes']['quote_modes_quote_reply_sel'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Quote and reply selected'),
-    '#default_value' => $config->get('quote_modes_quote_reply_sel'),
-    '#disabled' => TRUE,
-  ];
-
-  $types = node_type_get_types();
-  $options = [];
-  foreach ($types as $type => $info) {
-    $options[$type] = $info->name;
-  }
-  $form['where'] = [
-    '#type' => 'fieldset',
-    '#title' => t('Allow quotes in the:'),
-  ];
-  #sdpm($config->get('quote_allow_types'));
-  #sdpm($options);
-  $form['where']['quote_allow_types'] = [
-    '#type' => 'checkboxes',
-    '#title' => t('Content types'),
-    '#options' => $options,
-    '#default_value' => $config->get('quote_allow_types'),
-  ];
-  $form['where']['quote_allow_comments'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Comments'),
-    '#description' => t('Checkbox works if node type allow quoting'),
-    '#default_value' => $config->get('quote_allow_comments'),
-  ];
-
-  $form['ckeditor_support_set'] = [
-    '#type' => 'fieldset',
-    '#title' => t('CKEditor support'),
-  ];
-  $form['ckeditor_support_set']['quote_ckeditor_support'] = [
-    '#type' => 'checkbox',
-    '#title' => t('CKEditor support'),
-    '#description' => t('If checkbox checked and CKEditor found on the page, CKEditor will have a priority'),
-    '#default_value' => $config->get('quote_ckeditor_support'),
-    '#disabled' => !module_exists('ckeditor'),
-  ];
-
-  $form['other'] = [
-    '#type' => 'fieldset',
-    '#title' => t('Other settings'),
-  ];
-  $form['other']['quote_selector'] = [
-    '#type' => 'textfield',
-    '#title' => t('CSS selector of your comment form textarea (where you write new comments)'),
-    '#description' => t('By default it is: #edit-comment-body textarea'),
-    '#default_value' => $config->get('quote_selector'),
-  ];
-  $form['other']['quote_selector_comment_quote_all'] = [
-    '#type' => 'textfield',
-    '#title' => t('CSS selector of your comment body class (where you quote all)'),
-    '#description' => t('By default it is: .field-name-comment-body'),
-    '#default_value' => $config->get('quote_selector_comment_quote_all'),
-  ];
-  $form['other']['quote_selector_node_quote_all'] = [
-    '#type' => 'textfield',
-    '#title' => t('CSS selector of your node body class (where you quote all)'),
-    '#description' => t('By default it is: .field-name-body'),
-    '#default_value' => $config->get('quote_selector_node_quote_all'),
-  ];
-  $form['other']['quote_limit'] = [
-    '#type' => 'textfield',
-    '#title' => t('Quote limit'),
-    '#default_value' => $config->get('quote_limit'),
-    '#attributes' => [
-      ' type' => 'number',
-    ],
-  ];
-
-  return system_settings_form($form);
-}
-*/
