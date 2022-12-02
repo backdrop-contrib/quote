@@ -52,7 +52,7 @@
           let curValue = getCommentAreaCurValue(commentArea);
           let parent = $(this).closest('.comment');
           let username = parent.find('a.username').text();
-          let value = curValue + '> **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + selected + '\n\n';
+          let value = curValue + '\n > **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + selected + '\n\n';
           setCommentAreaValue(commentArea, value);
           commentArea.focus();
         }
@@ -66,7 +66,7 @@
         let parent = $(this).closest('.comment');
         let username = parent.find('a.username').text();
         let alltext = parent.find(Backdrop.settings.quote.quote_selector_comment_quote_all).text().substring(0, quoteLimit);
-        let value = curValue + '> **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + alltext + '\n';
+        let value = curValue + '\n > **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + alltext + '\n';
         setCommentAreaValue(commentArea, value);
         commentArea.focus();
       });
@@ -79,7 +79,7 @@
           let curValue = getCommentAreaCurValue(commentArea);
           let parent = $(this).closest('.node');
           let username = parent.find('a.username').first().text();
-          let value = curValue + '> **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + selected + '\n\n';
+          let value = curValue + '\n > **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + selected + '\n\n';
           setCommentAreaValue(commentArea, value);
           commentArea.focus();
         }
@@ -92,7 +92,7 @@
         let parent = $(this).closest('.node');
         let username = parent.find('a.username').first().text();
         let alltext = parent.find(Backdrop.settings.quote.quote_selector_node_quote_all).text().substring(0, quoteLimit);
-        let value = curValue + '> **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + alltext + '\n';
+        let value = curValue + '\n > **' + Backdrop.t('@author wrote:', {'@author': username}) + '** ' + alltext + '\n';
         setCommentAreaValue(commentArea, value);
         commentArea.focus();
       });

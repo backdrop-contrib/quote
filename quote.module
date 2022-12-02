@@ -153,7 +153,7 @@ function quote_form_alter(&$form, &$form_state, $form_id) {
     $comment_limit = substr($comment->comment_body[LANGUAGE_NONE][0]['value'], 0, $limit);
     if (module_exists('markdown')) {
       $form['comment_body'][$language][0]['#default_value'] =
-        '> **' . $user->name . ' wrote:** ' . $comment_limit  . '\n\n';
+        '\n > **' . $user->name . ' wrote:** ' . $comment_limit  . '\n\n';
     }
     else {
       $form['comment_body'][$language][0]['#default_value'] =
